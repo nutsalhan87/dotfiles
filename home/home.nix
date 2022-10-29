@@ -17,8 +17,6 @@
     mediainfo
 
     # gaming
-    steam
-    steam-run
     wineWowPackages.stagingFull
     winetricks
     gzdoom
