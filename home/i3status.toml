@@ -1,0 +1,75 @@
+[theme]
+name = "space-villain"
+
+[theme.overrides]
+idle_bg = "#081014"
+idle_fg = "#c0c0c0"
+warning_bg = "#081014"
+warning_fg = "#c0c0c0"
+info_bg = "#081014"
+info_fg = "#c0c0c0"
+good_bg = "#081014"
+good_fg = "#c0c0c0"
+critical_bg = "#081014"
+critical_fg = "#c0c0c0"
+separator_bg = "#081014"
+separator_fg = "#646464"
+separator = "││"
+
+[icons]
+name = "none"
+
+[icons.overrides]
+thermometer = "CPU TEMP"
+time = "TIME"
+memory_mem = "MEM"
+cogs = "LA"
+gpu = "GPU"
+cpu = "CPU"
+
+[[block]]
+block = "disk_space"
+path =  "/"
+info_type = "used"
+format = "{icon} {used}/{total}"
+
+[[block]]
+block = "sound"
+max_vol=100
+step_width=5
+
+[[block]]
+block = "backlight"
+
+[[block]]
+block = "battery"
+driver = "upower"
+format = "{percentage}"
+full_format = "{percentage} "
+
+[[block]]
+block = "nvidia_gpu"
+label = "​"
+interval = 5
+
+[[block]]
+block = "memory"
+display_type = "memory"
+format_mem = "{mem_used}/{mem_total} ({mem_used_percents})"
+clickable = false
+
+[[block]]
+block = "cpu"
+format = "{barchart} {utilization} {frequency}"
+interval = 1
+
+[[block]]
+block = "temperature"
+collapsed = false
+chip = "k10temp-pci-00c3"
+format = "{average}"
+
+[[block]]
+block = "time"
+interval = 1
+format = "%a %d.%m.%Y %H:%M:%S"
