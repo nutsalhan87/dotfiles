@@ -21,7 +21,7 @@
     winetricks
     gzdoom
 
-    #media
+    # media
     ffmpeg
     vlc
 
@@ -57,7 +57,6 @@
     gnumake #ass
     binutils #ass
     htop
-#    i3lock
     jetbrains.idea-ultimate
     ncdu # для того, чтобы узнать, что сколько занимает
     php
@@ -109,11 +108,11 @@
   };
 
   gtk.iconTheme = {
-    name = "Arc";
+    name = "Adwaita";
     package = pkgs.arc-icon-theme;
   };
 
-  qt.enable = false;
+  qt.enable = true;
   qt.platformTheme = "gnome";
   qt.style.package = pkgs.adwaita-qt;
   qt.style.name = "adwaita";
