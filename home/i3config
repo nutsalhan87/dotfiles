@@ -1,7 +1,7 @@
 # vim: set ft=conf
 
 set $mod Mod4
-font pango:Iosevka 10
+font pango:Iosevka 12
 
 # xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the
 # screen before suspend. Use loginctl lock-session to lock your screen.
@@ -172,7 +172,6 @@ smart_gaps on
 # finds out, if available)
 bar {
         status_command i3status-rs
-	
 
 	colors {
 		background #081014
