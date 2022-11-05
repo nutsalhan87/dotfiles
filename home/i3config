@@ -22,6 +22,8 @@ bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
 
+bindsym XF86Calculator exec "alacritty -e fish -C python3" 
+
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
@@ -41,6 +43,8 @@ bindcode $mod+40 exec "dmenu_run"
 #bindsym $mod+l focus right
 
 bindsym $mod+l exec "i3lock -e -i ~/.wallpaper.png"
+
+bindsym $mod+n exec nemo
 
 # alternatively, you can use the cursor keys:
 bindsym $mod+Left focus left

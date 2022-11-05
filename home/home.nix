@@ -62,6 +62,7 @@
     php
     selectdefaultapplication
     unar
+    cinnamon.nemo
   ];
 
   programs.vscode = {
@@ -103,12 +104,14 @@
   };
 
   gtk.theme = {
-    name = "Arc";
-    package = pkgs.arc-theme;
+#    name = "Arc";
+#    package = pkgs.arc-theme;
+    name = "Orchis";
+    package = pkgs.orchis-theme;
   };
 
   gtk.iconTheme = {
-    name = "Adwaita";
+    name = "Arc";
     package = pkgs.arc-icon-theme;
   };
 

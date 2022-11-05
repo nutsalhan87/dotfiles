@@ -91,9 +91,12 @@
     videoDrivers = [ "nvidia" ];
     layout = "us,ru";
     xkbOptions = "grp:caps_toggle, grp_led:caps, compose:ralt";
-    displayManager.autoLogin = {
-      enable = false;
-      user = "nutsalhan87";
+    displayManager = {
+      gdm.enable = true;
+      autoLogin = {
+        enable = false;
+        user = "nutsalhan87";
+      };
     };
     windowManager.i3 = {
       enable = true;
