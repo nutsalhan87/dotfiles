@@ -46,23 +46,25 @@
     postgresql
     git
     pulseaudio
-    (python3.withPackages (p: with p; [
+    (hiPrio (python3.withPackages (p: with p; [ # hiPrio над lldb
       numpy
       pandas
       scipy
-    ]))
-    nasm #ass
-    gcc #ass
-    gdb #ass
-    gnumake #ass
-    binutils #ass
+    ])))
+    nasm
+    (hiPrio gcc)
+    gdb 
+    gnumake
+    (hiPrio binutils) #тут линкер ld
     htop
     jetbrains.idea-ultimate
     ncdu # для того, чтобы узнать, что сколько занимает
-    php
+    php # чтобы запускать php сервер
     selectdefaultapplication
     unar
     cinnamon.nemo
+    steam-run # для прокторинга
+    clang lldb cmake clang-tools
   ];
 
   programs.vscode = {
@@ -73,6 +75,8 @@
       dotjoshjohnson.xml
       ms-python.python
       redhat.java
+      ms-vscode.cmake-tools
+      twxs.cmake
     ];
   };
 
