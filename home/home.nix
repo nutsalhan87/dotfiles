@@ -50,6 +50,9 @@
       numpy
       pandas
       scipy
+      matplotlib
+      pytorch
+      jinja2
     ])))
     nasm
     (hiPrio gcc)
@@ -62,9 +65,9 @@
     php # чтобы запускать php сервер
     selectdefaultapplication
     unar
-    cinnamon.nemo
     steam-run # для прокторинга
     clang lldb cmake clang-tools
+    tree
   ];
 
   programs.vscode = {

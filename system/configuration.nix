@@ -86,13 +86,18 @@
     host    all             all             127.0.0.1/32            trust
   '';
 
+  environment.shellAliases = {
+    bsave = "sudo cpupower frequency-set -g powersave";
+    bstd = "sudo cpupower frequency-set -g schedutil";
+  };
+
   services.xserver = {
     enable = true;
     videoDrivers = [ "nvidia" ];
     layout = "us,ru";
     xkbOptions = "grp:caps_toggle, grp_led:caps, compose:ralt";
     displayManager = {
-      gdm.enable = true;
+      lightdm.enable = true;
       autoLogin = {
         enable = false;
         user = "nutsalhan87";

@@ -44,8 +44,6 @@ bindcode $mod+40 exec "dmenu_run"
 
 bindsym $mod+l exec "i3lock -e -i ~/.wallpaper.png"
 
-bindsym $mod+n exec nemo
-
 # alternatively, you can use the cursor keys:
 bindsym $mod+Left focus left
 bindsym $mod+Down focus down
@@ -169,7 +167,7 @@ bindsym $mod+r mode "resize"
 for_window [class="^.*"] border pixel 2
 hide_edge_borders both
 
-gaps inner 10
+gaps inner 5
 smart_gaps on
 
 # Start i3bar to display a workspace bar (plus the system information i3status
