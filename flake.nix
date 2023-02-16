@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
+    old-nixpkgs.url = "nixpkgs/nixos-22.11";
 
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -11,7 +12,7 @@
 
   };
 
-  outputs = { nixpkgs, home-manager, ... }@inputs: {
+  outputs = { nixpkgs, old-nixpkgs, home-manager, ... }@inputs: {
     nixosConfigurations = {
       lenovo = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
@@ -29,7 +30,12 @@
           }) ];
         };
         modules = [ ./home/home.nix ];
-        extraSpecialArgs = { inherit inputs; };
+        extraSpecialArgs = { 
+          inherit inputs;
+          old-pkgs = import old-nixpkgs rec {
+            system = "x86_64-linux";
+          }; 
+        };
       };
     };
   };

@@ -44,6 +44,8 @@ bindcode $mod+40 exec "dmenu_run"
 
 bindsym $mod+l exec "i3lock -e -i ~/.wallpaper.png"
 
+bindsym $mod+n exec "nemo"
+
 # alternatively, you can use the cursor keys:
 bindsym $mod+Left focus left
 bindsym $mod+Down focus down
@@ -186,3 +188,4 @@ bar {
 }
 
 exec_always feh --bg-scale ~/.wallpaper.png
+exec blueman-applet

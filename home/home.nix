@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, old-pkgs, ... }:
 
 {
   nixpkgs.config.allowUnfreePredicate = (pkg: true); # workaround
@@ -14,7 +14,6 @@
     inkscape
     imagemagick
     krita
-    mediainfo
 
     # gaming
     wineWowPackages.stagingFull
@@ -24,6 +23,7 @@
     # media
     ffmpeg
     vlc
+    mediainfo
 
     # communcation
     zoom-us 
@@ -34,7 +34,7 @@
 
     # utilities
     any-nix-shell
-    maim
+    old-pkgs.maim
     obs-studio
     pavucontrol
     qpwgraph
@@ -46,19 +46,15 @@
     postgresql
     git
     pulseaudio
-    (hiPrio (python3.withPackages (p: with p; [ # hiPrio над lldb
+    (python3.withPackages (p: with p; [
       numpy
       pandas
       scipy
       matplotlib
-      pytorch
-      jinja2
-    ])))
-    nasm
-    (hiPrio gcc)
+    ]))
+    gcc
     gdb 
     gnumake
-    (hiPrio binutils) #тут линкер ld
     htop
     jetbrains.idea-ultimate
     ncdu # для того, чтобы узнать, что сколько занимает
@@ -66,8 +62,13 @@
     selectdefaultapplication
     unar
     steam-run # для прокторинга
-    clang lldb cmake clang-tools
     tree
+    cinnamon.nemo
+    cinnamon.xviewer
+    progress
+    postman # чтобы отправлять http запросы к ресурсам
+    nodejs
+    zip
   ];
 
   programs.vscode = {
@@ -78,8 +79,6 @@
       dotjoshjohnson.xml
       ms-python.python
       redhat.java
-      ms-vscode.cmake-tools
-      twxs.cmake
     ];
   };
 
@@ -91,18 +90,6 @@
     ".config/i3status-rust/config.toml".source = ./i3status.toml;
   };
 
-  home.sessionVariables = {
-    EDITOR = "nano";
-    TERMINAL = "alacritty";
-    JAVA_TOOL_OPTIONS = "-Dawt.useSystemAAFontSettings=lcd";
-    LD_LIBRARY_PATH = let
-      inputs = with pkgs; [
-        xorg.libX11 xorg.libXcomposite xorg.libXcursor xorg.libXdamage xorg.libXext xorg.libXfixes
-	xorg.libXi xorg.libXrandr xorg.libXrender xorg.libXtst xorg.libxcb xorg.xcbutilkeysyms xorg.libXxf86vm
-      ];
-    in builtins.foldl' (a: b: "${a}:${b}/lib") "/run/opengl-driver/lib:/run/opengl-driver-32/lib" inputs;
-  };
-
   gtk.enable = true;
 
   gtk.font = {
@@ -111,8 +98,6 @@
   };
 
   gtk.theme = {
-#    name = "Arc";
-#    package = pkgs.arc-theme;
     name = "Orchis";
     package = pkgs.orchis-theme;
   };
@@ -128,10 +113,6 @@
   qt.style.name = "adwaita";
 
   programs.firefox.enable = true;
-
-  programs.fish = {
-    enable = true;
-  };
-
+  
   services.picom.enable = true;
 }
