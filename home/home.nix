@@ -10,8 +10,6 @@
   
   home.packages = with pkgs; [
     # creativity
-    discord
-    inkscape
     imagemagick
     krita
 
@@ -28,13 +26,14 @@
     # communcation
     zoom-us 
     tdesktop
-    
+    discord
+ 
     # documents
     libreoffice
 
     # utilities
     any-nix-shell
-    old-pkgs.maim
+    maim
     obs-studio
     pavucontrol
     qpwgraph
@@ -58,16 +57,12 @@
     htop
     jetbrains.idea-ultimate
     ncdu # для того, чтобы узнать, что сколько занимает
-    php # чтобы запускать php сервер
     selectdefaultapplication
     unar
-    steam-run # для прокторинга
     tree
     cinnamon.nemo
     cinnamon.xviewer
     progress
-    postman # чтобы отправлять http запросы к ресурсам
-    nodejs
     zip
   ];
 

@@ -77,7 +77,7 @@
   services.fstrim.enable = true;
   services.xserver.libinput.enable = true;
   services.blueman.enable = true;
-  
+
   #MY SHIT
   services.xserver.libinput.touchpad.naturalScrolling = true; 
   services.postgresql.enable = true;
