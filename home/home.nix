@@ -93,8 +93,8 @@
     ".config/i3status-rust/config.toml".source = ./i3status.toml;
     ".config/mimeapps.list".source = ./mimeapps.list;
     ".config/alacritty/alacritty.yml".source = ./alacritty.yml;
-    ".config/discord/settings.json".source = discord.json;
-    ".config/flameshot/flameshot.ini".source = flameshot.ini;
+    ".config/discord/settings.json".source = ./discord.json;
+    ".config/flameshot/flameshot.ini".source = ./flameshot.ini;
   };
 
   gtk.enable = true;
