@@ -33,7 +33,7 @@
 
     # utilities
     any-nix-shell
-    maim
+    flameshot
     obs-studio
     pavucontrol
     qpwgraph
@@ -50,6 +50,10 @@
       pandas
       scipy
       matplotlib
+      scikit-learn
+      pillow
+      seaborn
+      ipykernel
     ]))
     gcc
     gdb 
@@ -64,6 +68,9 @@
     cinnamon.xviewer
     progress
     zip
+    postman
+    umlet
+    microsoft-edge
   ];
 
   programs.vscode = {
@@ -74,6 +81,7 @@
       dotjoshjohnson.xml
       ms-python.python
       redhat.java
+      ms-toolsai.jupyter
     ];
   };
 
@@ -83,6 +91,10 @@
     ".jdks/jdk17".source = pkgs.jdk17;
     ".config/i3/config".source = ./i3config;
     ".config/i3status-rust/config.toml".source = ./i3status.toml;
+    ".config/mimeapps.list".source = ./mimeapps.list;
+    ".config/alacritty/alacritty.yml".source = ./alacritty.yml;
+    ".config/discord/settings.json".source = discord.json;
+    ".config/flameshot/flameshot.ini".source = flameshot.ini;
   };
 
   gtk.enable = true;

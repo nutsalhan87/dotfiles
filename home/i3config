@@ -22,7 +22,7 @@ bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
 
-bindsym XF86Calculator exec "alacritty -e fish -C python3" 
+bindsym $mod+bracketright exec "alacritty -e fish -C python3" 
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -136,8 +136,11 @@ bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
 
-bindsym --release $mod+grave exec "maim -us /tmp/screenshot.png && xclip < /tmp/screenshot.png -sel clipboard -t image/png"
-bindsym --release Print exec "maim -u /tmp/screenshot.png && xclip < /tmp/screenshot.png -sel clipboard -t image/png"
+#bindsym --release $mod+grave exec "maim -us /tmp/screenshot.png && xclip < /tmp/screenshot.png -sel clipboard -t image/png"
+#bindsym --release Print exec "maim -u /tmp/screenshot.png && xclip < /tmp/screenshot.png -sel clipboard -t image/png"
+
+bindsym --release $mod+grave exec "flameshot gui -c -p /tmp/screenshot.png"
+bindsym --release Print exec "flameshot full -c -p /tmp/screenshot.png"
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
