@@ -4,9 +4,22 @@
   nixpkgs.config.allowUnfreePredicate = (pkg: true); # workaround
 
   programs.home-manager.enable = true;
-  home.username = "nutsalhan87";
-  home.homeDirectory = "/home/nutsalhan87";
-  home.stateVersion = "22.05";
+  home = {
+    username = "nutsalhan87";
+    homeDirectory = "/home/nutsalhan87";
+    stateVersion = "22.05";
+    file = {
+      ".icons/default".source = "${pkgs.vanilla-dmz}/share/icons/Vanilla-DMZ-AA";
+      ".jdks/jdk8".source = pkgs.openjdk8;
+      ".jdks/jdk17".source = pkgs.jdk17;
+      ".config/i3/config".source = ./config/i3config;
+      ".config/i3status-rust/config.toml".source = ./config/i3status.toml;
+      ".config/mimeapps.list".source = ./config/mimeapps.list;
+      ".config/alacritty/alacritty.yml".source = ./config/alacritty.yml;
+      ".config/discord/settings.json".source = ./config/discord.json;
+      ".config/flameshot/flameshot.ini".source = ./config/flameshot.ini;
+    };
+  };
   
   home.packages = with pkgs; [
     # creativity
@@ -72,28 +85,19 @@
     microsoft-edge
   ];
 
-  programs.vscode = {
-    enable = true;
-    package = pkgs.vscodium;
-    extensions = with pkgs.vscode-extensions; [
-      ms-vscode.cpptools
-      dotjoshjohnson.xml
-      ms-python.python
-      redhat.java
-      ms-toolsai.jupyter
-    ];
-  };
-
-  home.file = {
-    ".icons/default".source = "${pkgs.vanilla-dmz}/share/icons/Vanilla-DMZ-AA";
-    ".jdks/jdk8".source = pkgs.openjdk8;
-    ".jdks/jdk17".source = pkgs.jdk17;
-    ".config/i3/config".source = ./config/i3config;
-    ".config/i3status-rust/config.toml".source = ./config/i3status.toml;
-    ".config/mimeapps.list".source = ./config/mimeapps.list;
-    ".config/alacritty/alacritty.yml".source = ./config/alacritty.yml;
-    ".config/discord/settings.json".source = ./config/discord.json;
-    ".config/flameshot/flameshot.ini".source = ./config/flameshot.ini;
+  programs = {
+    firefox.enable = true;
+    vscode = {
+      enable = true;
+      package = pkgs.vscodium;
+      extensions = with pkgs.vscode-extensions; [
+        ms-vscode.cpptools
+        dotjoshjohnson.xml
+        ms-python.python
+        redhat.java
+        ms-toolsai.jupyter
+      ];
+    };
   };
 
   gtk = {
@@ -119,7 +123,6 @@
     style.name = "adwaita";
   };
 
-  programs.firefox.enable = true;
   
   services.picom.enable = true;
 }
