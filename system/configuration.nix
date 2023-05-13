@@ -42,7 +42,7 @@
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.cleanTmpDir = true;
+  boot.tmp.cleanOnBoot = true;
 
   networking.hostName = "lenovo"; # Define your hostname.
   # Pick only one of the below networking options.

@@ -1,5 +1,5 @@
 [theme]
-name = "space-villain"
+theme = "space-villain"
 
 [theme.overrides]
 idle_bg = "#081014"
@@ -17,7 +17,7 @@ separator_fg = "#646464"
 separator = "││"
 
 [icons]
-name = "none"
+icons = "none"
 
 [icons.overrides]
 thermometer = "CPU TEMP"
@@ -31,12 +31,12 @@ cpu = "CPU"
 block = "disk_space"
 path =  "/"
 info_type = "used"
-format = "{icon} {used}/{total}"
+format = " $icon $used/$total "
 
 [[block]]
 block = "sound"
-max_vol=100
-step_width=5
+max_vol = 100
+step_width = 5
 
 [[block]]
 block = "backlight"
@@ -44,32 +44,29 @@ block = "backlight"
 [[block]]
 block = "battery"
 driver = "upower"
-format = "{percentage}"
-full_format = "{percentage} "
+format = " $icon $percentage "
+full_format = " $icon $percentage "
 
 [[block]]
 block = "nvidia_gpu"
-label = "​"
+format = "​ GTX 1650 $utilization $memory.eng(w:3) $temperature "
 interval = 5
 
 [[block]]
 block = "memory"
-display_type = "memory"
-format_mem = "{mem_used}/{mem_total} ({mem_used_percents})"
-clickable = false
+format = " $icon $mem_used.eng(w:3)/$mem_total.eng(w:3) $mem_used_percents "
 
 [[block]]
 block = "cpu"
-format = "{barchart} {utilization} {frequency}"
+format = " $icon $barchart $utilization $frequency.eng(w:3) "
 interval = 1
 
 [[block]]
 block = "temperature"
-collapsed = false
 chip = "k10temp-pci-00c3"
-format = "{average}"
+format = " $icon $average "
 
 [[block]]
 block = "time"
 interval = 1
-format = "%a %d.%m.%Y %H:%M:%S"
+format = " $icon $timestamp.datetime(f:'%a %d.%m.%Y %H:%M:%S') "

@@ -51,7 +51,6 @@
       scipy
       matplotlib
       scikit-learn
-      pillow
       seaborn
       ipykernel
     ]))
@@ -89,35 +88,36 @@
     ".icons/default".source = "${pkgs.vanilla-dmz}/share/icons/Vanilla-DMZ-AA";
     ".jdks/jdk8".source = pkgs.openjdk8;
     ".jdks/jdk17".source = pkgs.jdk17;
-    ".config/i3/config".source = ./i3config;
-    ".config/i3status-rust/config.toml".source = ./i3status.toml;
-    ".config/mimeapps.list".source = ./mimeapps.list;
-    ".config/alacritty/alacritty.yml".source = ./alacritty.yml;
-    ".config/discord/settings.json".source = ./discord.json;
-    ".config/flameshot/flameshot.ini".source = ./flameshot.ini;
+    ".config/i3/config".source = ./config/i3config;
+    ".config/i3status-rust/config.toml".source = ./config/i3status.toml;
+    ".config/mimeapps.list".source = ./config/mimeapps.list;
+    ".config/alacritty/alacritty.yml".source = ./config/alacritty.yml;
+    ".config/discord/settings.json".source = ./config/discord.json;
+    ".config/flameshot/flameshot.ini".source = ./config/flameshot.ini;
   };
 
-  gtk.enable = true;
-
-  gtk.font = {
-    name = "Roboto";
-    size = 11;
+  gtk = {
+    enable = true;
+    font = {
+      name = "Roboto";
+      size = 11;
+    };
+    theme = {
+      name = "Orchis";
+      package = pkgs.orchis-theme;
+    };
+    iconTheme = {
+      name = "Arc";
+      package = pkgs.arc-icon-theme;
+    };
   };
 
-  gtk.theme = {
-    name = "Orchis";
-    package = pkgs.orchis-theme;
+  qt = {
+    enable = true;
+    platformTheme = "gnome";
+    style.package = pkgs.adwaita-qt;
+    style.name = "adwaita";
   };
-
-  gtk.iconTheme = {
-    name = "Arc";
-    package = pkgs.arc-icon-theme;
-  };
-
-  qt.enable = true;
-  qt.platformTheme = "gnome";
-  qt.style.package = pkgs.adwaita-qt;
-  qt.style.name = "adwaita";
 
   programs.firefox.enable = true;
   
