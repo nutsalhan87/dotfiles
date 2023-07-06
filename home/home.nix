@@ -1,4 +1,4 @@
-{ config, pkgs, old-pkgs, vscext, ... }:
+{ config, pkgs, old-pkgs, ... }:
 
 {
   nixpkgs.config.allowUnfreePredicate = (pkg: true); # workaround
@@ -101,7 +101,7 @@
         ms-python.python
         rust-lang.rust-analyzer
         dotjoshjohnson.xml
-      ] ++ (with vscext; [
+      ] ++ (with pkgs.vscext; [
         tauri-apps.tauri-vscode
       ]);
     };

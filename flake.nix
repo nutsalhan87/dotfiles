@@ -28,7 +28,7 @@
           system = "x86_64-linux";
           
           overlays = [ (final: prev: {
-            vscext = nix-vscode-extensions.${system}.default;
+            vscext = nix-vscode-extensions.extensions.${system}.vscode-marketplace;
           }) ];
         };
         modules = [ ./home/home.nix ];
