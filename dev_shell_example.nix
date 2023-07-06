@@ -6,10 +6,10 @@
 
     in {
       devShell.x86_64-linux = pkgs.mkShell {
-        buildInputs = with pkgs; [ dbus ];
+        buildInputs = with pkgs; [ ];
         nativeBuildInputs = with pkgs; [ 
           # тут пакеты
         ];
-     };
-  };
+      };
+    };
 }

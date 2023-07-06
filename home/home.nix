@@ -1,4 +1,4 @@
-{ config, pkgs, old-pkgs, ... }:
+{ config, pkgs, old-pkgs, vscext, ... }:
 
 {
   nixpkgs.config.allowUnfreePredicate = (pkg: true); # workaround
@@ -25,6 +25,7 @@
     # creativity
     imagemagick
     krita
+    kdenlive
 
     # gaming
     wineWowPackages.stagingFull
@@ -35,6 +36,8 @@
     ffmpeg
     vlc
     mediainfo
+    obs-studio
+    microsoft-edge
 
     # communcation
     zoom-us 
@@ -45,33 +48,14 @@
     libreoffice
 
     # utilities
-    any-nix-shell
     flameshot
-    obs-studio
     pavucontrol
     qpwgraph
     qbittorrent
     xclip
     xorg.xev #чтобы узнать название клавиши
-    jdk17
-    maven
-    postgresql
-    git
     pulseaudio
-    (python3.withPackages (p: with p; [
-      numpy
-      pandas
-      scipy
-      matplotlib
-      scikit-learn
-      seaborn
-      ipykernel
-    ]))
-    gcc
-    gdb 
-    gnumake
     htop
-    jetbrains.idea-ultimate
     ncdu # для того, чтобы узнать, что сколько занимает
     selectdefaultapplication
     unar
@@ -80,9 +64,26 @@
     cinnamon.xviewer
     progress
     zip
+
+    # development
+    jdk17
+    maven
+    postgresql
+    git
+    (python3.withPackages (p: with p; [
+      numpy
+      pandas
+      scipy
+      matplotlib
+      ipykernel ipympl
+    ]))
+    gcc
+    gdb 
+    gnumake
+    jetbrains.idea-ultimate
     postman
     umlet
-    microsoft-edge
+    rustup
   ];
 
   programs = {
@@ -92,11 +93,17 @@
       package = pkgs.vscodium;
       extensions = with pkgs.vscode-extensions; [
         ms-vscode.cpptools
-        dotjoshjohnson.xml
-        ms-python.python
+        twxs.cmake
+        ms-vscode.cmake-tools
+        ms-toolsai.jupyter ms-toolsai.jupyter-renderers
         redhat.java
-        ms-toolsai.jupyter
-      ];
+        jnoortheen.nix-ide
+        ms-python.python
+        rust-lang.rust-analyzer
+        dotjoshjohnson.xml
+      ] ++ (with vscext; [
+        tauri-apps.tauri-vscode
+      ]);
     };
   };
 
@@ -119,10 +126,11 @@
   qt = {
     enable = true;
     platformTheme = "gnome";
-    style.package = pkgs.adwaita-qt;
-    style.name = "adwaita";
+    style = {
+      name = "adwaita";
+      package = pkgs.adwaita-qt;
+    };
   };
 
-  
   services.picom.enable = true;
 }

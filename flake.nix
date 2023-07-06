@@ -4,6 +4,7 @@
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
     old-nixpkgs.url = "nixpkgs/nixos-22.11";
+    nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
  
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -12,7 +13,7 @@
 
   };
 
-  outputs = { nixpkgs, old-nixpkgs, home-manager, ... }@inputs: {
+  outputs = { nixpkgs, old-nixpkgs, home-manager, nix-vscode-extensions, ... }@inputs: {
     nixosConfigurations = {
       lenovo = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
@@ -27,6 +28,7 @@
           system = "x86_64-linux";
           
           overlays = [ (final: prev: {
+            vscext = nix-vscode-extensions.${system}.default;
           }) ];
         };
         modules = [ ./home/home.nix ];
@@ -34,7 +36,7 @@
           inherit inputs;
           old-pkgs = import old-nixpkgs rec {
             system = "x86_64-linux";
-          }; 
+          };
         };
       };
     };

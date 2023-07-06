@@ -23,7 +23,6 @@ icons = "none"
 thermometer = "CPU TEMP"
 time = "TIME"
 memory_mem = "MEM"
-cogs = "LA"
 gpu = "GPU"
 cpu = "CPU"
 
@@ -54,7 +53,7 @@ interval = 5
 
 [[block]]
 block = "memory"
-format = " $icon $mem_used.eng(w:3)/$mem_total.eng(w:3) $mem_used_percents "
+format = " $icon $mem_used.eng(w:4)/$mem_total.eng(w:3) $mem_used_percents "
 
 [[block]]
 block = "cpu"
