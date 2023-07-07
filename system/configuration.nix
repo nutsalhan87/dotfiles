@@ -137,11 +137,6 @@
     };
 
     sessionVariables = {
-      MPLBACKEND = "webagg";
-      MOZ_USE_XINPUT2 = "1";
-      EDITOR = "nano";
-      TERMINAL = "alacritty";
-      JAVA_TOOL_OPTIONS = "-Dawt.useSystemAAFontSettings=lcd";
       LD_LIBRARY_PATH = let
         inputs = with pkgs; [
           xorg.libX11 xorg.libXcomposite xorg.libXcursor xorg.libXdamage xorg.libXext xorg.libXfixes
