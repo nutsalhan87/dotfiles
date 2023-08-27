@@ -10,23 +10,25 @@
     clippy
     rustfmt
     rust-analyzer
-  ]); in
+  ]);
+  gsettings-desktop-schemas = pkgs.gsettings-desktop-schemas;
+  gtk3 = pkgs.gtk3; in
 
   {
     username = "nutsalhan87";
     homeDirectory = "/home/nutsalhan87";
     stateVersion = "22.05";
+
     file = {
       ".icons/default".source = "${pkgs.vanilla-dmz}/share/icons/Vanilla-DMZ-AA";
       ".jdks/jdk8".source = pkgs.openjdk8;
       ".jdks/jdk17".source = pkgs.jdk17;
       ".config/i3/config".source = ./config/i3config;
       ".config/i3status-rust/config.toml".source = ./config/i3status.toml;
-      ".config/mimeapps.list".source = ./config/mimeapps.list;
-      ".config/alacritty/alacritty.yml".source = ./config/alacritty.yml;
       ".config/discord/settings.json".source = ./config/discord.json;
       ".config/flameshot/flameshot.ini".source = ./config/flameshot.ini;
     };
+
     sessionVariables = {
       RUST_SRC_PATH = "${rust-toolchain}/lib/rustlib/src/rust/library";
       MPLBACKEND = "webagg";
@@ -34,9 +36,11 @@
       EDITOR = "nano";
       TERMINAL = "alacritty";
       JAVA_TOOL_OPTIONS = "-Dawt.useSystemAAFontSettings=lcd";
+      XDG_DATA_DIRS = "${gsettings-desktop-schemas}/share/gsettings-schemas/${gsettings-desktop-schemas.name}:${gtk3}/share/gsettings-schemas/${gtk3.name}:\${XDG_DATA_DIRS}";
     };
+
     packages = with pkgs; [
-       # creativity
+      # creativity
       imagemagick
       krita
       kdenlive
@@ -98,29 +102,29 @@
       postman
       umlet
       rust-toolchain
+      nodejs
+      php
     ];
   };
   
   programs = {
     home-manager.enable = true;
     firefox.enable = true;
+    fish.enable = true;
+    alacritty = {
+      enable = true;
+      settings = {
+        font = {
+          family = "Iosevka Term";
+          size = 7;
+        };
+        window.opacity = 1;
+      };
+    };
     vscode = {
       enable = true;
-      package = pkgs.vscodium;
-      extensions = with pkgs.vscext; [
-        ms-vscode.cpptools
-        twxs.cmake
-        ms-vscode.cmake-tools
-        ms-toolsai.jupyter ms-toolsai.jupyter-renderers
-        redhat.java
-        jnoortheen.nix-ide
-        ms-python.python
-        rust-lang.rust-analyzer
-        dotjoshjohnson.xml
-        tauri-apps.tauri-vscode
-      ];
+      package = pkgs.vscodium.fhs;
     };
-    fish.enable = true;
   };
 
   gtk = {
@@ -130,18 +134,18 @@
       size = 11;
     };
     theme = {
-      name = "Orchis";
-      package = pkgs.orchis-theme;
+      name = "Fluent";
+      package = pkgs.fluent-gtk-theme;
     };
     iconTheme = {
-      name = "Arc";
-      package = pkgs.arc-icon-theme;
+      name = "Fluent";
+      package = pkgs.fluent-icon-theme;
     };
   };
 
   qt = {
     enable = true;
-    platformTheme = "gnome";
+    platformTheme = "gtk";
     style = {
       name = "adwaita";
       package = pkgs.adwaita-qt;
@@ -149,4 +153,6 @@
   };
 
   services.picom.enable = true;
+
+  xdg = import ./config/xdg.nix;
 }

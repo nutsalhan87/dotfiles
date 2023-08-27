@@ -75,9 +75,9 @@
   services = {
     logind.extraConfig = "HandlePowerKey=suspend";
     upower.enable = true;
-    tlp.enable = true;
     fstrim.enable = true;
     blueman.enable = true;
+    tlp.enable = true;
 
     postgresql = {
       enable = true;
@@ -101,7 +101,6 @@
       };
       windowManager.i3 = {
         enable = true;
-        package = pkgs.i3-gaps;
         extraPackages = with pkgs; [
           dmenu
           i3status-rust
@@ -163,10 +162,10 @@
     ];
   };
 
-  fonts.fonts = with pkgs; [
+  fonts.packages = with pkgs; [
     iosevka-bin noto-fonts noto-fonts-emoji noto-fonts-cjk liberation_ttf unscii
     source-code-pro source-sans-pro source-serif-pro roboto roboto-slab roboto-mono
-    open-sans fira fira-code
+    open-sans fira fira-code font-awesome
    ];
 
   users.users.nutsalhan87 = {
@@ -187,8 +186,6 @@
     dconf.enable = true;
     fish.enable = true;
   };
-
-  # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
