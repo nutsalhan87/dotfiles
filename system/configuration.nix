@@ -50,6 +50,7 @@
       efi.canTouchEfiVariables = true;
     };
     tmp.cleanOnBoot = true;
+    kernel.sysctl."kernel.sysrq" = 502;
   };
 
   networking.hostName = "lenovo"; # Define your hostname.
@@ -90,32 +91,21 @@
     xserver = {
       enable = true;
       videoDrivers = [ "nvidia" ];
-      layout = "us,ru";
-      xkbOptions = "grp:caps_toggle, grp_led:caps, compose:ralt";
-      displayManager = {
-        lightdm.enable = true;
-        autoLogin = {
-          enable = false;
-          user = "nutsalhan87";
-        };
+      xkb = {
+        layout = "us,ru";
+        options = "grp:caps_toggle, grp_led:caps, compose:ralt";      
       };
-      windowManager.i3 = {
-        enable = true;
-        extraPackages = with pkgs; [
-          dmenu
-          i3status-rust
-          i3lock
-          alacritty
-        ];
-      };
+      displayManager.lightdm.enable = true;
+      windowManager.i3.enable = true;
       screenSection = ''
         Option "metamodes" "nvidia-auto-select +0+0 { ForceCompositionPipeline = On }"
         Option "TearFree" "true"
       '';
-      libinput = {
-        enable = true;
-        touchpad.naturalScrolling = true;
-      };
+    };
+    
+    libinput = {
+      enable = true;
+      touchpad.naturalScrolling = true;
     };
 
     pipewire = {
@@ -132,7 +122,6 @@
     shellAliases = {
       bsave = "sudo cpupower frequency-set -g powersave";
       bstd = "sudo cpupower frequency-set -g schedutil";
-      alacritty-copy = "alacritty --working-directory . & disown";
     };
 
     sessionVariables = {
@@ -170,21 +159,25 @@
 
   users.users.nutsalhan87 = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "video" "adbusers" "libvirtd" "audio" ];
+    extraGroups = [ "wheel" "video" "adbusers" "libvirtd" "audio" "vboxusers" ];
     shell = pkgs.fish;
   };
-
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
 
   programs = {
     dconf.enable = true;
     fish.enable = true;
+    adb.enable = true;
+  };
+
+  virtualisation = {
+    docker = {
+      enable = true;
+      rootless = {
+        enable = true;
+        setSocketVariable = true;
+      };
+    };
+    virtualbox.host.enable = true;
   };
 
   # Enable the OpenSSH daemon.

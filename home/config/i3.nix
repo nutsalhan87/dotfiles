@@ -1,0 +1,269 @@
+{ pkgs, nix-colorizer }: 
+let
+  color_theme = {
+    bg = "#081014";
+    primary = "#1B3442";
+    secondary = "#375e33";
+    alert = "#5e3333";
+    text_active = "#ffffff";
+    text_neutral = "#c0c0c0";
+    text_inactive = "#888888";
+  };
+  lighten = hex: percent: let
+    rgbValue = nix-colorizer.hex.to.rgb hex;
+    hslValue = nix-colorizer.rgb.to.hsl rgbValue;
+    modifier = 1 + percent / 100.0;
+    lightened = nix-colorizer.hsl.mul hslValue { l = modifier; };
+    lighenedRgbValue = nix-colorizer.hsl.to.rgb lightened;
+  in
+    nix-colorizer.rgb.to.hex lighenedRgbValue;
+  darken = hex: percent: let
+    rgbValue = nix-colorizer.hex.to.rgb hex;
+    hslValue = nix-colorizer.rgb.to.hsl rgbValue;
+    modifier = 1 - percent / 100.0;
+    lightened = nix-colorizer.hsl.mul hslValue { l = modifier; };
+    lighenedRgbValue = nix-colorizer.hsl.to.rgb lightened;
+  in
+    nix-colorizer.rgb.to.hex lighenedRgbValue;
+in
+
+{
+  i3 =
+    let
+      mod = "Mod4";
+    in
+    {
+      enable = true;
+      config = {
+        colors =
+          let
+            palette = bg: text: {
+              background = bg;
+              border = bg;
+              childBorder = bg;
+              indicator = lighten bg 100;
+              inherit text;
+            };
+          in
+          with color_theme; {
+            background = bg;
+            focused = palette (lighten primary 30) text_active;
+            focusedInactive = palette "#5f676a" text_active; # parent container color
+            unfocused = palette bg text_inactive;
+            urgent = palette alert text_active;
+          };
+
+        floating = {
+          modifier = mod;
+          titlebar = false;
+        };
+        fonts = {
+          names = [ "Iosevka" ];
+          size = 11.0;
+        };
+        gaps = {
+          inner = 5;
+          smartGaps = true;
+        };
+        window = {
+          titlebar = false;
+          hideEdgeBorders = "both";
+        };
+        workspaceAutoBackAndForth = true;
+
+        modifier = mod;
+        keybindings =
+          let
+            alacritty = "${pkgs.alacritty}/bin/alacritty";
+            refresh_i3status = "killall -SIGUSR1 i3status-rs";
+          in
+          {
+            "${mod}+Shift+q" = "kill";
+            "${mod}+n" = "exec nemo";
+            "${mod}+h" = "split h";
+            "${mod}+v" = "split v";
+            "${mod}+f" = "fullscreen toggle";
+            "${mod}+s" = "layout stacking";
+            "${mod}+w" = "layout tabbed";
+            "${mod}+e" = "layout toggle split";
+            "${mod}+space" = "focus mode_toggle";
+            "${mod}+Shift+space" = "floating toggle";
+            "${mod}+p" = "focus parent";
+            "${mod}+c" = "focus child";
+            "${mod}+Shift+c" = "reload"; # reload conf file
+            "${mod}+Shift+r" = "restart"; # restart i3
+            "${mod}+Shift+e" = "exec \"i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'\"";
+            "${mod}+r" = "mode resize";
+
+            "${mod}+Return" = "exec ${alacritty}";
+            "${mod}+d" = "exec ${pkgs.dmenu}/bin/dmenu_run";
+            "${mod}+l" = "exec \"${pkgs.i3lock}/bin/i3lock -e -i ~/.wallpaper.png\"";
+            "${mod}+bracketright" = "exec \"${alacritty} -e fish -C python3\"";
+            "--release ${mod}+grave" = "exec \"flameshot gui -c -p /tmp/screenshot.png\"";
+            "--release Print" = "exec \"flameshot full -c -p /tmp/screenshot.png\"";
+
+            "${mod}+Left" = "focus left";
+            "${mod}+Down" = "focus down";
+            "${mod}+Up" = "focus up";
+            "${mod}+Right" = "focus right";
+
+            "${mod}+Shift+Left" = "move left";
+            "${mod}+Shift+Down" = "move down";
+            "${mod}+Shift+Up" = "move up";
+            "${mod}+Shift+Right" = "move right";
+
+            "XF86MonBrightnessDown" = "exec --no-startup-id xbacklight -dec 5";
+            "XF86MonBrightnessUp" = "exec --no-startup-id xbacklight -inc 5";
+            "XF86AudioRaiseVolume" = "exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5% && ${refresh_i3status}";
+            "XF86AudioLowerVolume" = "exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -5% && ${refresh_i3status}";
+            "XF86AudioMute" = "exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && ${refresh_i3status}";
+            "XF86AudioMicMute" = "exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && ${refresh_i3status}";
+
+          }
+          // (builtins.foldl' (a: b: a // b) { } (
+            builtins.map (
+              i:
+              let
+                key = builtins.toString i;
+                ws = if i == 0 then "10" else builtins.toString i;
+              in
+              {
+                "${mod}+${key}" = "workspace number ${ws}";
+                "${mod}+Shift+${key}" = "move container to workspace number ${ws}";
+              }
+            ) (pkgs.lib.lists.range 0 9)
+          ));
+
+        modes = {
+          resize = {
+            Left = "resize shrink width 10 px or 10 ppt";
+            Down = "resize grow height 10 px or 10 ppt";
+            Up = "resize shrink height 10 px or 10 ppt";
+            Right = "resize grow width 10 px or 10 ppt";
+            Return = "mode default";
+            Escape = "mode default";
+          };
+        };
+
+        startup = [
+          {
+            command = "nm-applet";
+            notification = false;
+          }
+          { command = "blueman-applet"; }
+          {
+            command = "feh --bg-scale ~/.wallpaper.png";
+            always = true;
+          }
+        ];
+
+        bars =
+          let
+            palette = bg: text: {
+              border = bg;
+              background = bg;
+              inherit text;
+            };
+          in
+          [
+            {
+              colors = with color_theme; {
+                background = bg;
+                focusedWorkspace = palette primary text_active;
+                activeWorkspace = palette primary text_active;
+                inactiveWorkspace = palette bg text_inactive;
+                urgentWorkspace = palette alert text_active;
+                bindingMode = palette secondary text_active;
+              };
+              fonts = {
+                names = [
+                  "Iosevka"
+                  "Font Awesome 6 Free"
+                ];
+                size = 11.0;
+              };
+              mode = "dock";
+              position = "bottom";
+              statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ~/.config/i3status-rust/config-default.toml";
+              trayOutput = "primary"; # On which output (monitor) the icons should be displayed
+              workspaceButtons = true; # Whether workspace buttons should be shown or not
+              workspaceNumbers = true; # Whether workspace numbers should be displayed within the workspace buttons
+            }
+          ];
+      };
+    };
+
+  i3status-rust = {
+    enable = true;
+    bars = {
+      default = {
+        theme = "plain";
+        settings.theme.overrides = with color_theme; {
+          idle_bg = bg;
+          idle_fg = text_neutral;
+          warning_bg = bg;
+          warning_fg = text_neutral;
+          info_bg = bg;
+          info_fg = text_neutral;
+          good_bg = bg;
+          good_fg = text_neutral;
+          critical_bg = bg;
+          critical_fg = text_neutral;
+          separator_bg = bg;
+          separator_fg = darken text_inactive 25;
+          separator = "  ";
+        };
+        icons = "awesome6";
+        blocks = [
+          {
+            block = "disk_space";
+            path = "/";
+            info_type = "used";
+            format = "  $used/$total";
+          }
+          {
+            block = "sound";
+            max_vol = 100;
+            step_width = 5;
+          }
+          {
+            block = "backlight";
+            format = "  $brightness ";
+          }
+          {
+            block = "battery";
+            driver = "upower";
+            format = " $icon $percentage ";
+            full_format = " $icon $percentage ";
+          }
+          {
+            block = "nvidia_gpu";
+            format = " GTX 1650 $utilization $memory.eng(w:3) $temperature ";
+            interval = 5;
+          }
+          {
+            block = "memory";
+            format = " $icon $mem_used.eng(w:4)/$mem_total.eng(w:3) $mem_used_percents ";
+            icons_overrides.memory_mem = "";
+          }
+          {
+            block = "cpu";
+            format = " $icon $barchart $utilization $frequency.eng(w:3) ";
+            interval = 1;
+            icons_overrides.cpu = "";
+          }
+          {
+            block = "temperature";
+            chip = "k10temp-pci-00c3";
+            format = " $icon $average ";
+          }
+          {
+            block = "time";
+            interval = 1;
+            format = " $icon $timestamp.datetime(f:'%a %d.%m.%Y %H:%M:%S', l:ru_RU) ";
+          }
+        ];
+      };
+    };
+  };
+}
