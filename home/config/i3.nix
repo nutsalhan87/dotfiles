@@ -37,23 +37,22 @@ in
     {
       enable = true;
       config = {
-        colors =
-          let
-            palette = bg: text: {
-              background = bg;
-              border = bg;
-              childBorder = bg;
-              indicator = lighten bg 100;
-              inherit text;
-            };
-          in
-          with color_theme; {
+        colors =let
+          palette = bg: text: {
             background = bg;
-            focused = palette (lighten primary 30) text.active;
-            focusedInactive = palette "#5f676a" text.active; # parent container color
-            unfocused = palette bg text.inactive;
-            urgent = palette alert text.active;
+            border = bg;
+            childBorder = bg;
+            indicator = lighten bg 100;
+            inherit text;
           };
+        in
+        with color_theme; {
+          background = bg;
+          focused = palette (lighten primary 30) text.active;
+          focusedInactive = palette "#5f676a" text.active; # parent container color
+          unfocused = palette bg text.inactive;
+          urgent = palette alert text.active;
+        };
 
         floating = {
           modifier = mod;
@@ -72,6 +71,7 @@ in
           hideEdgeBorders = "both";
         };
         workspaceAutoBackAndForth = true;
+        defaultWorkspace = "workspace number 1";
 
         modifier = mod;
         keybindings =
