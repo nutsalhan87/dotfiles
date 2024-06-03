@@ -1,14 +1,5 @@
 { pkgs, nix-colorizer }: 
 let
-  color_theme = {
-    bg = "#081014";
-    primary = "#1B3442";
-    secondary = "#375e33";
-    alert = "#5e3333";
-    text_active = "#ffffff";
-    text_neutral = "#c0c0c0";
-    text_inactive = "#888888";
-  };
   lighten = hex: percent: let
     rgbValue = nix-colorizer.hex.to.rgb hex;
     hslValue = nix-colorizer.rgb.to.hsl rgbValue;
@@ -17,6 +8,7 @@ let
     lighenedRgbValue = nix-colorizer.hsl.to.rgb lightened;
   in
     nix-colorizer.rgb.to.hex lighenedRgbValue;
+  
   darken = hex: percent: let
     rgbValue = nix-colorizer.hex.to.rgb hex;
     hslValue = nix-colorizer.rgb.to.hsl rgbValue;
@@ -25,6 +17,16 @@ let
     lighenedRgbValue = nix-colorizer.hsl.to.rgb lightened;
   in
     nix-colorizer.rgb.to.hex lighenedRgbValue;
+  
+  color_theme = rec {
+    bg = "#081014";
+    primary = "#423833";
+    secondary = "#375e33";
+    alert = "#5e3333";
+    text.active = "#ffffff";
+    text.neutral = darken text.active 25;
+    text.inactive = darken text.active 50;
+  };
 in
 
 {
@@ -47,10 +49,10 @@ in
           in
           with color_theme; {
             background = bg;
-            focused = palette (lighten primary 30) text_active;
-            focusedInactive = palette "#5f676a" text_active; # parent container color
-            unfocused = palette bg text_inactive;
-            urgent = palette alert text_active;
+            focused = palette (lighten primary 30) text.active;
+            focusedInactive = palette "#5f676a" text.active; # parent container color
+            unfocused = palette bg text.inactive;
+            urgent = palette alert text.active;
           };
 
         floating = {
@@ -169,11 +171,11 @@ in
             {
               colors = with color_theme; {
                 background = bg;
-                focusedWorkspace = palette primary text_active;
-                activeWorkspace = palette primary text_active;
-                inactiveWorkspace = palette bg text_inactive;
-                urgentWorkspace = palette alert text_active;
-                bindingMode = palette secondary text_active;
+                focusedWorkspace = palette primary text.active;
+                activeWorkspace = palette primary text.active;
+                inactiveWorkspace = palette bg text.inactive;
+                urgentWorkspace = palette alert text.active;
+                bindingMode = palette secondary text.active;
               };
               fonts = {
                 names = [
@@ -200,17 +202,17 @@ in
         theme = "plain";
         settings.theme.overrides = with color_theme; {
           idle_bg = bg;
-          idle_fg = text_neutral;
+          idle_fg = text.neutral;
           warning_bg = bg;
-          warning_fg = text_neutral;
+          warning_fg = text.neutral;
           info_bg = bg;
-          info_fg = text_neutral;
+          info_fg = text.neutral;
           good_bg = bg;
-          good_fg = text_neutral;
+          good_fg = text.neutral;
           critical_bg = bg;
-          critical_fg = text_neutral;
+          critical_fg = text.neutral;
           separator_bg = bg;
-          separator_fg = darken text_inactive 25;
+          separator_fg = darken text.inactive 25;
           separator = "  ";
         };
         icons = "awesome6";
