@@ -22,16 +22,24 @@
   hardware = {
     nvidia = {
       modesetting.enable = true;
-      powerManagement.enable = true;
+      powerManagement = {
+        enable = true;
+        finegrained = true;
+      };
       prime = {
-        offload.enable = true;
+        offload = {
+          enable = true;
+          enableOffloadCmd = true;
+        };
         amdgpuBusId = "PCI:5:0:0";
         nvidiaBusId = "PCI:1:0:0";
       };
+      open = true;
+      dynamicBoost.enable = true;
     };
-    opengl = {
+    graphics = {
       enable = true;
-      driSupport32Bit = true;
+      enable32Bit = true;
     };
     acpilight.enable = true;
     bluetooth.enable = true;
@@ -57,6 +65,19 @@
   # Pick only one of the below networking options.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
   networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
+  networking.firewall = { # для wireguard
+   # if packets are still dropped, they will show up in dmesg
+   logReversePathDrops = true;
+   # wireguard trips rpfilter up
+   extraCommands = ''
+     ip46tables -t mangle -I nixos-fw-rpfilter -p udp -m udp --sport 51820 -j RETURN
+     ip46tables -t mangle -I nixos-fw-rpfilter -p udp -m udp --dport 51820 -j RETURN
+   '';
+   extraStopCommands = ''
+     ip46tables -t mangle -D nixos-fw-rpfilter -p udp -m udp --sport 51820 -j RETURN || true
+     ip46tables -t mangle -D nixos-fw-rpfilter -p udp -m udp --dport 51820 -j RETURN || true
+   '';
+  };
 
   # Set your time zone.
   time.timeZone = "Europe/Moscow";
@@ -133,21 +154,13 @@
       in builtins.foldl' (a: b: "${a}:${b}/lib") "/run/opengl-driver/lib:/run/opengl-driver-32/lib" inputs;
     };
 
-    systemPackages = with pkgs; let
-      nvidia-offload = pkgs.writeShellScriptBin "nvidia-offload" ''
-        export __NV_PRIME_RENDER_OFFLOAD=1
-        export __NV_PRIME_RENDER_OFFLOAD_PROVIDER=NVIDIA-G0
-        export __GLX_VENDOR_LIBRARY_NAME=nvidia
-        export __VK_LAYER_NV_optimus=NVIDIA_only
-        exec -a "$0" "$@"
-      '';
-    in [
+    systemPackages = with pkgs; [
       vim
       wget
       firefox
       unzip
-      networkmanagerapplet feh 
-      nvidia-offload
+      networkmanagerapplet 
+      feh 
     ];
   };
 
@@ -170,12 +183,9 @@
   };
 
   virtualisation = {
-    docker = {
+    docker.rootless = {
       enable = true;
-      rootless = {
-        enable = true;
-        setSocketVariable = true;
-      };
+      setSocketVariable = true;
     };
     virtualbox.host.enable = true;
   };

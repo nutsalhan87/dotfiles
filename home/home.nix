@@ -1,4 +1,4 @@
-{ config, pkgs, old-pkgs, nix-colorizer, ... }:
+{ config, pkgs, old-pkgs, nix-colorizer, fenix, ... }:
 
 let 
   i3-config = import ./config/i3.nix { inherit pkgs nix-colorizer; }; 
@@ -7,7 +7,7 @@ in
   nixpkgs.config.allowUnfreePredicate = (pkg: true); # workaround
 
   home = let 
-    rust-toolchain = with pkgs.fenix; combine (with complete; [
+    rust-toolchain = with fenix; combine (with complete; [
       rustc
       rust-src
       cargo
@@ -69,6 +69,7 @@ in
  
       # documents
       libreoffice
+      djview
 
       # utilities
       flameshot
@@ -83,8 +84,8 @@ in
       selectdefaultapplication
       unar
       tree
-      cinnamon.nemo
-      cinnamon.xviewer
+      nemo
+      xviewer
       progress
       zip
       linuxKernel.packages.linux_6_6.perf
@@ -104,8 +105,8 @@ in
       gcc
       gdb
       gnumake
-      jetbrains.idea-ultimate
-      jetbrains.clion
+      jetbrains.idea-community
+      jetbrains.pycharm-community
       umlet
       rust-toolchain
       nodejs
@@ -114,6 +115,8 @@ in
       insomnia
       shellcheck-minimal # для bash-ide расширения для vscode'а
       clang-tools
+      zig
+      zls # zig language server для vscode'а
     ];
   };
   
@@ -148,6 +151,8 @@ in
       };
     };
     picom.enable = true; # нужен ли?
+    blueman-applet.enable = true;
+    network-manager-applet.enable = true;
   };
 
   xsession.windowManager.i3 = i3-config.i3;
