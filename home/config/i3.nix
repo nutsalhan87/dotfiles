@@ -1,4 +1,4 @@
-{ pkgs, nix-colorizer }: 
+{ pkgs, nix-colorizer, python-pkg, ui-scale }: 
 let
   color_theme = let
     text.active = "#ffffff";
@@ -15,7 +15,7 @@ let
   
   nemo = "${pkgs.nemo}/bin/nemo";
   alacritty = "${pkgs.alacritty}/bin/alacritty";
-  python = "${pkgs.python3}/bin/python";
+  python = "${python-pkg}/bin/python";
   dmenu = "${pkgs.dmenu}/bin/dmenu_run";
   i3lock = "${pkgs.i3lock}/bin/i3lock";
   flameshot = "${pkgs.flameshot}/bin/flameshot";
@@ -69,7 +69,7 @@ in
           size = 11.0;
         };
         gaps = {
-          inner = 5;
+          inner = builtins.floor (5 * ui-scale);
           smartGaps = true;
         };
         window = {
@@ -104,7 +104,7 @@ in
 
             "${mod}+Return" = "exec ${alacritty}";
             "${mod}+d" = "exec ${dmenu}";
-            "${mod}+l" = "exec \"${i3lock} -e -i ~/.wallpaper.png\"";
+            "${mod}+l" = "exec \"${i3lock} -e -i ~/.wallpaper.png -t\"";
             "${mod}+bracketright" = "exec \"${alacritty} -e ${python}\"";
             "--release ${mod}+grave" = "exec \"${flameshot} gui -c -p /tmp/screenshot.png\"";
             "--release Print" = "exec \"${flameshot} full -c -p /tmp/screenshot.png\"";
@@ -153,11 +153,6 @@ in
         };
 
         startup = [
-          {
-            command = "nm-applet";
-            notification = false;
-          }
-          { command = "blueman-applet"; }
           {
             command = "${feh} --no-fehbg --bg-scale ~/.wallpaper.png";
             always = true;
@@ -232,6 +227,27 @@ in
             block = "sound";
             max_vol = 100;
             step_width = 5;
+            click = [
+              { button = "right"; }
+              {
+                button = "left";
+                action = "toggle_mute";
+              }
+            ];
+          }
+          {
+            block = "sound";
+            device_kind = "source";
+            format = "$icon";
+            click = [
+              { button = "up"; }
+              { button = "down"; }
+              { button = "right"; }
+              { 
+                button = "left";
+                action = "toggle_mute";
+              }
+            ];
           }
           {
             block = "backlight";
@@ -242,11 +258,6 @@ in
             driver = "upower";
             format = " $icon $percentage ";
             full_format = " $icon $percentage ";
-          }
-          {
-            block = "nvidia_gpu";
-            format = " GTX 1650 $utilization $memory.eng(w:3) $temperature ";
-            interval = 5;
           }
           {
             block = "memory";

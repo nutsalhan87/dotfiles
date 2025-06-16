@@ -5,6 +5,7 @@
     nixpkgs.url = "nixpkgs/nixos-unstable";
     old-nixpkgs.url = "nixpkgs/nixos-24.05";
     nix-colorizer.url = "github:nutsalhan87/nix-colorizer";
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     
     fenix = {
       url = "github:nix-community/fenix";
@@ -17,13 +18,16 @@
     };
   };
 
-  outputs = { nixpkgs, old-nixpkgs, nix-colorizer, fenix, home-manager, ... }@inputs: let 
+  outputs = { nixpkgs, old-nixpkgs, nix-colorizer, nixos-hardware, fenix, home-manager, ... }@inputs: let 
     system = "x86_64-linux";
   in {
     nixosConfigurations = {
       lenovo = nixpkgs.lib.nixosSystem {
         inherit system;
-        modules = [ ./system/configuration.nix ];
+        modules = [ 
+          nixos-hardware.nixosModules.lenovo-ideapad-15arh05
+          ./system/configuration.nix
+        ];
         specialArgs = { inherit inputs; };
       };
     };

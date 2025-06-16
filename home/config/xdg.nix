@@ -1,4 +1,5 @@
 {
+  enable = true;
   mimeApps = {
     enable = true;
     associations.added = {

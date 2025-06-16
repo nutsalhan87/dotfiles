@@ -1,7 +1,16 @@
 { config, pkgs, old-pkgs, nix-colorizer, fenix, ... }:
 
 let 
-  i3-config = import ./config/i3.nix { inherit pkgs nix-colorizer; }; 
+  python-pkg = (pkgs.python3.withPackages (p: with p; [
+    numpy
+    pandas
+    scipy
+    matplotlib
+    ipykernel ipympl
+    requests
+  ]));
+  ui-scale = 1;
+  i3-config = import ./config/i3.nix { inherit pkgs nix-colorizer python-pkg ui-scale; };
 in
 {
   nixpkgs.config.allowUnfreePredicate = (pkg: true); # workaround
@@ -21,7 +30,6 @@ in
     stateVersion = "22.05";
 
     file = {
-      ".icons/default".source = "${pkgs.graphite-cursors}/share/icons/graphite-light-nord";
       ".jdks/jdk8".source = pkgs.openjdk8;
       ".jdks/jdk17".source = pkgs.jdk17;
       ".jdks/jdk21".source = pkgs.jdk21;
@@ -29,7 +37,11 @@ in
       ".pnpm/.keep".text = "";
     };
 
-    shellAliases.alacritty-copy = "alacritty --working-directory . & disown";
+    shellAliases = {
+      alacritty-copy = "alacritty --working-directory . & disown";
+      bsave = "sudo cpupower frequency-set -g powersave";
+      bstd = "sudo cpupower frequency-set -g schedutil";
+    };
 
     sessionVariables = {
       RUST_SRC_PATH = "${rust-toolchain}/lib/rustlib/src/rust/library";
@@ -48,14 +60,17 @@ in
       imagemagick
       krita
       kdenlive
+      gimp
 
       # gaming
       wineWowPackages.stagingFull
       winetricks
       gzdoom
       steam-run
+      xonotic
 
       # media
+      feh
       ffmpeg
       vlc
       mediainfo
@@ -65,7 +80,7 @@ in
       # communcation
       zoom-us 
       tdesktop
-      discord
+      # discord
  
       # documents
       libreoffice
@@ -89,19 +104,13 @@ in
       progress
       zip
       linuxKernel.packages.linux_6_6.perf
+      hiddify-app
 
       # development
-      jdk21
       maven
       postgresql
       git
-      (python3.withPackages (p: with p; [
-        numpy
-        pandas
-        scipy
-        matplotlib
-        ipykernel ipympl
-      ]))
+      python-pkg
       gcc
       gdb
       gnumake
@@ -115,25 +124,26 @@ in
       insomnia
       shellcheck-minimal # для bash-ide расширения для vscode'а
       clang-tools
-      zig
-      zls # zig language server для vscode'а
+      poetry
     ];
+
+    pointerCursor = {
+      name = "graphite-light-nord";
+      package = pkgs.graphite-cursors;
+    };
   };
   
   programs = {
     home-manager.enable = true;
     firefox.enable = true;
     fish.enable = true;
-    alacritty = {
-      enable = true;
-      settings = {
-        font = {
-          size = 7;
-        };
-      };
-    };
+    alacritty.enable = true;
     vscode = import ./config/vscode.nix pkgs;
     i3status-rust = i3-config.i3status-rust;
+    java = {
+      enable = true;
+      package = pkgs.jdk21;
+    };
   };
 
   services = {
@@ -150,14 +160,25 @@ in
         };
       };
     };
-    picom.enable = true; # нужен ли?
+    picom.enable = true;
     blueman-applet.enable = true;
     network-manager-applet.enable = true;
   };
 
-  xsession.windowManager.i3 = i3-config.i3;
+  xsession = {
+    enable = true;
+    windowManager.i3 = i3-config.i3;
+  };
 
-  gtk = {
+  xresources.properties = {
+    "Xft.dpi" = builtins.floor (96 * ui-scale);
+  };
+
+  gtk = let 
+    gtk-config = {
+      gtk-application-prefer-dark-theme = true;
+    };
+  in {
     enable = true;
     font = {
       name = "Roboto";
@@ -171,6 +192,8 @@ in
       name = "Fluent";
       package = pkgs.fluent-icon-theme;
     };
+    gtk3.extraConfig = {} // gtk-config;
+    gtk4.extraConfig = {} // gtk-config;
   };
 
   qt = {

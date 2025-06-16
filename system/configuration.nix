@@ -20,22 +20,9 @@
     ];
 
   hardware = {
-    nvidia = {
-      modesetting.enable = true;
-      powerManagement = {
-        enable = true;
-        finegrained = true;
-      };
-      prime = {
-        offload = {
-          enable = true;
-          enableOffloadCmd = true;
-        };
-        amdgpuBusId = "PCI:5:0:0";
-        nvidiaBusId = "PCI:1:0:0";
-      };
-      open = true;
-      dynamicBoost.enable = true;
+    nvidia.powerManagement = {
+      enable = true;
+      finegrained = true;
     };
     graphics = {
       enable = true;
@@ -65,19 +52,6 @@
   # Pick only one of the below networking options.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
   networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
-  networking.firewall = { # для wireguard
-   # if packets are still dropped, they will show up in dmesg
-   logReversePathDrops = true;
-   # wireguard trips rpfilter up
-   extraCommands = ''
-     ip46tables -t mangle -I nixos-fw-rpfilter -p udp -m udp --sport 51820 -j RETURN
-     ip46tables -t mangle -I nixos-fw-rpfilter -p udp -m udp --dport 51820 -j RETURN
-   '';
-   extraStopCommands = ''
-     ip46tables -t mangle -D nixos-fw-rpfilter -p udp -m udp --sport 51820 -j RETURN || true
-     ip46tables -t mangle -D nixos-fw-rpfilter -p udp -m udp --dport 51820 -j RETURN || true
-   '';
-  };
 
   # Set your time zone.
   time.timeZone = "Europe/Moscow";
@@ -95,11 +69,9 @@
   security.rtkit.enable = true;
 
   services = {
-    logind.extraConfig = "HandlePowerKey=suspend";
+    logind.powerKey = "suspend";
     upower.enable = true;
-    fstrim.enable = true;
     blueman.enable = true;
-    tlp.enable = true;
 
     postgresql = {
       enable = true;
@@ -111,7 +83,6 @@
 
     xserver = {
       enable = true;
-      videoDrivers = [ "nvidia" ];
       xkb = {
         layout = "us,ru";
         options = "grp:caps_toggle, grp_led:caps, compose:ralt";      
@@ -140,11 +111,6 @@
   };
 
   environment = {
-    shellAliases = {
-      bsave = "sudo cpupower frequency-set -g powersave";
-      bstd = "sudo cpupower frequency-set -g schedutil";
-    };
-
     sessionVariables = {
       LD_LIBRARY_PATH = let
         inputs = with pkgs; [
@@ -157,15 +123,12 @@
     systemPackages = with pkgs; [
       vim
       wget
-      firefox
       unzip
-      networkmanagerapplet 
-      feh 
     ];
   };
 
   fonts.packages = with pkgs; [
-    iosevka-bin noto-fonts noto-fonts-emoji noto-fonts-cjk liberation_ttf unscii
+    iosevka-bin noto-fonts noto-fonts-emoji noto-fonts-cjk-sans liberation_ttf unscii
     source-code-pro source-sans-pro source-serif-pro roboto roboto-slab roboto-mono
     open-sans fira fira-code font-awesome
    ];

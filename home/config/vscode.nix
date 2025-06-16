@@ -9,7 +9,9 @@ pkgs:
     svelte.svelte-vscode
     llvm-vs-code-extensions.vscode-clangd
     mads-hartmann.bash-ide-vscode
-    ziglang.vscode-zig
+    ms-azuretools.vscode-docker
+    ms-toolsai.jupyter
+    vscjava.vscode-java-pack
   ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
     {
       name = "tauri-vscode";
