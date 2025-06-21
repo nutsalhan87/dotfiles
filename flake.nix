@@ -3,9 +3,9 @@
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
-    old-nixpkgs.url = "nixpkgs/nixos-24.05";
-    nix-colorizer.url = "github:nutsalhan87/nix-colorizer";
+    stable-nixpkgs.url = "nixpkgs/nixos-25.05";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    nix-colorizer.url = "github:nutsalhan87/nix-colorizer";
     
     fenix = {
       url = "github:nix-community/fenix";
@@ -18,7 +18,7 @@
     };
   };
 
-  outputs = { nixpkgs, old-nixpkgs, nix-colorizer, nixos-hardware, fenix, home-manager, ... }@inputs: let 
+  outputs = { nixpkgs, stable-nixpkgs, nix-colorizer, nixos-hardware, fenix, home-manager, ... }@inputs: let 
     system = "x86_64-linux";
   in {
     nixosConfigurations = {
@@ -41,7 +41,7 @@
         extraSpecialArgs = { 
           inherit nix-colorizer;
           fenix = fenix.packages.${system};
-          old-pkgs = import old-nixpkgs rec {
+          stable-pkgs = import stable-nixpkgs rec {
             inherit system;
           };
         };

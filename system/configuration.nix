@@ -30,7 +30,6 @@
     };
     acpilight.enable = true;
     bluetooth.enable = true;
-    pulseaudio.enable = false;
   };
 
   powerManagement = {
@@ -66,7 +65,10 @@
     LC_TIME = "ru_RU.UTF-8";
   };
 
-  security.rtkit.enable = true;
+  security = {
+    rtkit.enable = true;
+    pam.services.hyprlock = {};
+  }; 
 
   services = {
     logind.powerKey = "suspend";
@@ -87,12 +89,16 @@
         layout = "us,ru";
         options = "grp:caps_toggle, grp_led:caps, compose:ralt";      
       };
-      displayManager.lightdm.enable = true;
       windowManager.i3.enable = true;
       screenSection = ''
         Option "metamodes" "nvidia-auto-select +0+0 { ForceCompositionPipeline = On }"
         Option "TearFree" "true"
       '';
+    };
+
+    displayManager.sddm = {
+      enable = true;
+      wayland.enable = true;
     };
     
     libinput = {
@@ -108,6 +114,7 @@
       };
       pulse.enable = true;
     };
+    pulseaudio.enable = false;
   };
 
   environment = {
@@ -118,6 +125,7 @@
           xorg.libXi xorg.libXrandr xorg.libXrender xorg.libXtst xorg.libxcb xorg.xcbutilkeysyms xorg.libXxf86vm
         ];
       in builtins.foldl' (a: b: "${a}:${b}/lib") "/run/opengl-driver/lib:/run/opengl-driver-32/lib" inputs;
+      NIXOS_OZONE_WL = "1";
     };
 
     systemPackages = with pkgs; [
@@ -131,7 +139,7 @@
     iosevka-bin noto-fonts noto-fonts-emoji noto-fonts-cjk-sans liberation_ttf unscii
     source-code-pro source-sans-pro source-serif-pro roboto roboto-slab roboto-mono
     open-sans fira fira-code font-awesome
-   ];
+  ];
 
   users.users.nutsalhan87 = {
     isNormalUser = true;
@@ -143,6 +151,10 @@
     dconf.enable = true;
     fish.enable = true;
     adb.enable = true;
+    hyprland = {
+      enable = true;
+      withUWSM = true;
+    };
   };
 
   virtualisation = {

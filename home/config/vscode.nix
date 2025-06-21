@@ -2,7 +2,7 @@ pkgs:
 {
   enable = true;
   mutableExtensionsDir = false;
-  extensions = with pkgs.vscode-extensions; [
+  profiles.default.extensions = with pkgs.vscode-extensions; [
     vadimcn.vscode-lldb
     jnoortheen.nix-ide
     rust-lang.rust-analyzer
