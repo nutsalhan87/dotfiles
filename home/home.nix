@@ -12,9 +12,11 @@
 
   ui-scale = 1;
   
+  vscode-config = import ./config/vscode.nix { inherit pkgs; };
   xdg-config = import ./config/xdg.nix { inherit pkgs; };
   i3-config = import ./config/i3.nix { inherit pkgs nix-colorizer python-pkg flameshot-pkg ui-scale; };
   hyprland-config = import ./config/hyprland.nix { inherit pkgs nix-colorizer python-pkg flameshot-pkg ui-scale; };
+  darkman-config = import ./config/darkman.nix { inherit pkgs python-pkg; };
 
 in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [ 
   {
@@ -38,15 +40,13 @@ in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [
         ".jdks/jdk8".source = pkgs.openjdk8;
         ".jdks/jdk17".source = pkgs.jdk17;
         ".jdks/jdk21".source = pkgs.jdk21;
-        ".local/share/fonts/Oranienbaum-Regular.ttf".source = ./assets/Oranienbaum-Regular.ttf;
-        ".config/discord/settings.json".source = ./config/discord.json;
         ".pnpm/.keep".text = "";
       };
 
       shellAliases = {
-        alacritty-copy = "alacritty --working-directory . & disown";
         bsave = "sudo cpupower frequency-set -g powersave";
         bstd = "sudo cpupower frequency-set -g schedutil";
+        xo = "xdg-open";
       };
 
       sessionVariables = {
@@ -54,10 +54,9 @@ in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [
         MPLBACKEND = "webagg";
         MOZ_USE_XINPUT2 = "1";
         EDITOR = "nano";
-        TERMINAL = "alacritty";
+        TERMINAL = "kitty";
         JAVA_TOOL_OPTIONS = "-Dawt.useSystemAAFontSettings=lcd";
         PNPM_HOME = "${homeDirectory}/.pnpm";
-        AQ_DRM_DEVICES = "/dev/dri/card2:/dev/dri/card1"; # amd, а иначе nvidia
       };
 
       sessionPath = [ "$PNPM_HOME" ];
@@ -109,8 +108,11 @@ in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [
         xviewer
         progress
         zip
-        linuxKernel.packages.linux_6_6.perf
+        linuxPackages.perf
         hiddify-app
+        amdgpu_top
+        wl-clipboard
+        tldr
 
         # development
         maven
@@ -143,11 +145,19 @@ in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [
       home-manager.enable = true;
       firefox.enable = true;
       fish.enable = true;
-      alacritty.enable = true;
-      vscode = import ./config/vscode.nix pkgs;
+      kitty = {
+        enable = true;
+        themeFile = "Alabaster_Dark";
+      };
       java = {
         enable = true;
         package = pkgs.jdk21;
+      };
+      vim = {
+        enable = true;
+        settings = {
+          number = true;
+        };
       };
     };
 
@@ -171,9 +181,7 @@ in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [
     };
 
     gtk = let 
-      gtk-config = {
-        gtk-application-prefer-dark-theme = true;
-      };
+      gtk-config = {};
     in {
       enable = true;
       font = {
@@ -181,11 +189,11 @@ in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [
         size = 11;
       };
       theme = {
-        name = "Fluent";
-        package = pkgs.fluent-gtk-theme;
+        name = "Fluent-Dark";
+        package = pkgs.fluent-gtk-theme.override { tweaks = [ "blur" ]; };
       };
       iconTheme = {
-        name = "Fluent";
+        name = "Fluent-dark";
         package = pkgs.fluent-icon-theme;
       };
       gtk3.extraConfig = {} // gtk-config;
@@ -194,13 +202,12 @@ in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [
 
     qt = {
       enable = true;
-      style = {
-        name = "adwaita";
-        package = pkgs.adwaita-qt;
-      };
+      platformTheme.name = "gtk3";
     };
   }
+  vscode-config
   xdg-config
   hyprland-config 
   i3-config
+  darkman-config
 ]

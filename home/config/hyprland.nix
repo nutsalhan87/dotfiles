@@ -1,5 +1,5 @@
 { pkgs, nix-colorizer, python-pkg, flameshot-pkg, ui-scale }: let
-  oklch2h = oklch: let
+  oklch2rgba = oklch: let
     round = x: let 
       ceiled = builtins.ceil x; 
       floored = builtins.floor x; 
@@ -20,23 +20,127 @@
   in with srgb'';
     "rgba(${r}, ${g}, ${b}, ${a})";
 
-  color_theme = let
-    text.active = nix-colorizer.hex.to.oklch "#ffffff";
-    text.inactive = nix-colorizer.oklch.darken text.active 0.5;
-  in rec {
-    bg = nix-colorizer.hex.to.oklch "#00111a";
-    primary = nix-colorizer.hex.to.oklch "#013f5d";
-    secondary = nix-colorizer.hex.to.oklch "#286223";
-    alert = nix-colorizer.hex.to.oklch "#7e011c";
-    inherit text;
+  oklch2rgba_hex = oklch: if oklch.a == 1.0
+    then "rgb(${builtins.substring 1 6 (nix-colorizer.oklch.to.hex oklch)})"
+    else "rgba(${builtins.substring 1 8 (nix-colorizer.oklch.to.hex oklch)})";
+
+  color_theme = {
+    dark = rec {
+      bg = nix-colorizer.hex.to.oklch "#112630";
+      primary = nix-colorizer.hex.to.oklch "#013f5d";
+      secondary = nix-colorizer.hex.to.oklch "#286223";
+      alert = nix-colorizer.hex.to.oklch "#7e011c";
+      text.active = nix-colorizer.hex.to.oklch "#ffffff";
+      text.inactive = text.active // { L = text.active.L * 0.5; };
+    };
+    light = rec {
+      bg = nix-colorizer.hex.to.oklch "#b9d2df";
+      primary = nix-colorizer.hex.to.oklch "#036896";
+      secondary = nix-colorizer.hex.to.oklch "#588b53";
+      alert = nix-colorizer.hex.to.oklch "#c22e3e";
+      text.active = nix-colorizer.hex.to.oklch "#ffffff";
+      text.inactive = text.active // { L = text.active.L * 0.2; };
+    };
   };
   opacity = 0.75;
 
+  hy3_palette = theme: let
+    palette = class: color: text: {
+      "col.${class}" = oklch2rgba (color // { a = opacity; });
+      "col.${class}.border" = oklch2rgba (color // { a = opacity / 1.5; });
+      "col.${class}.text" = oklch2rgba text;
+    };
+  in with theme;
+    builtins.foldl' (a: b: a // b) { } [
+      (palette "active" primary text.active) 
+      (palette "focused" (nix-colorizer.oklch.darken primary 0.2) text.active) 
+      (palette "inactive" bg text.inactive) 
+      (palette "urgent" alert text.active) 
+      (palette "locked" (nix-colorizer.hex.to.oklch "#746801") text.active) 
+    ];
+
+  waybar-style = let
+    dark-colors = with color_theme.dark; {
+      text_color = "${oklch2rgba text.active}";
+      text_color_contrast = "${oklch2rgba text.active}";
+      bg_color = "${oklch2rgba (bg // { a = opacity; })}";
+      primary_color = "${oklch2rgba (primary // { a = opacity; })}";
+      alert_color = "${oklch2rgba (alert // { a = opacity; })}";
+      secondary_color = "${oklch2rgba (secondary // { a = opacity; })}";
+    };
+    light-colors = with color_theme.light; {
+      text_color = "${oklch2rgba text.inactive}";
+      text_color_contrast = "${oklch2rgba text.active}";
+      bg_color = "${oklch2rgba (bg // { a = opacity; })}";
+      primary_color = "${oklch2rgba (primary // { a = opacity; })}";
+      alert_color = "${oklch2rgba (alert // { a = opacity; })}";
+      secondary_color = "${oklch2rgba (secondary // { a = opacity; })}";
+    };
+    style = colors: with colors; ''
+      window#waybar {
+        font-size: 14px;
+        font-family: "Iosevka", "Font Awesome 6 Free";
+        color: ${text_color};
+        background-color: transparent;
+      }
+
+      #waybar > box > box {
+        margin: 0px 5px 5px;
+        border-radius: 6px;
+      }
+
+      box.modules-right {
+        padding: 2px;
+        background-color: ${bg_color};
+      }
+
+      .module {
+        margin: 0px 10px;
+      }
+
+      .module#workspaces {
+        margin: 0;
+      }
+
+      #workspaces button {
+        padding: 4px;
+        margin: 0px 2px;
+        border-radius: 4px;
+        color: ${text_color};
+        background-color: ${bg_color};
+      }
+
+      #workspaces button:first-child {
+        margin-left: 0;
+      }
+
+      #workspaces button.active {
+        color: ${text_color_contrast};
+        background-color: ${primary_color};
+      }
+
+      #workspaces button.urgent {
+        color: ${text_color_contrast};
+        background-color: ${alert_color};
+      }
+
+      #submap.resize {
+        padding: 0px 1em;
+        border-radius: 4px;
+        color: ${text_color_contrast};
+        background-color: ${secondary_color};
+      }
+    ''; # TODO: попробовать напрямую oklch — css вроде бы поддерживает
+  in {
+    dark = style dark-colors;
+    light = style light-colors;
+  };
+
   wallpaper_path = "~/.wallpaper-dark.jpg";
-  keyboard_device = "platform::kbd_backlight";
+  keyboard_led_device = "platform::kbd_backlight";
 
   nemo = "${pkgs.nemo}/bin/nemo";
-  alacritty = "${pkgs.alacritty}/bin/alacritty";
+  kitty = "${pkgs.kitty}/bin/kitty";
   python = "${python-pkg}/bin/python";
   flameshot = "${flameshot-pkg}/bin/flameshot";
   brightnessctl = "${pkgs.brightnessctl}/bin/brightnessctl";
@@ -52,10 +156,11 @@ in {
     settings = {
       general = {
         layout = "hy3";
+        border_size = 2;
         gaps_out = 5;
         resize_on_border = true;
-        "col.active_border" = "rgb(${builtins.substring 1 6 (nix-colorizer.oklch.to.hex color_theme.primary)})";
-        "col.inactive_border" = "rgb(${builtins.substring 1 6 (nix-colorizer.oklch.to.hex color_theme.bg)})";
+        "col.active_border" = oklch2rgba_hex color_theme.dark.primary;
+        "col.inactive_border" = oklch2rgba_hex color_theme.dark.bg;
       };
       decoration = {
         rounding = 4;
@@ -87,7 +192,6 @@ in {
         mouse_move_enables_dpms = true;
         animate_manual_resizes = true; 
         animate_mouse_windowdragging = true;
-
       };
       binds = {
         workspace_back_and_forth = true;
@@ -107,24 +211,14 @@ in {
           text_font = "Iosevka";
           text_height = 11;
           text_padding = 5;
-        } // (let
-          palette = class: color: text: {
-            "col.${class}" = oklch2h (color // { a = opacity; });
-            "col.${class}.border" = oklch2h (color // { a = opacity / 1.5; });
-            "col.${class}.text" = oklch2h text;
-          };
-        in with color_theme;
-          builtins.foldl' (a: b: a // b) { } [
-            (palette "active" primary text.active) 
-            (palette "focused" (nix-colorizer.oklch.darken primary 0.2) text.active) 
-            (palette "inactive" bg text.inactive) 
-            (palette "urgent" alert text.active) 
-            (palette "locked" (nix-colorizer.hex.to.oklch "#746801") text.active) 
-          ]);
+        } // (hy3_palette color_theme.dark);
       };
-      monitor = [ "eDP-1, preferred, 0x0, ${toString ui-scale}" ];
+      monitor = [ 
+        "eDP-1, preferred, 0x0, ${toString ui-scale}"
+        "HDMI-A-1, preferred, auto, 1.25"
+      ];
       windowrule = [
-        "opacity 0.8, class:Alacritty"
+        "opacity 0.8, class:kitty"
         "opacity 0.85, class:code"
         "opacity 0.85, class:org.telegram.desktop"
         "opacity 1.0, class:org.telegram.desktop, initialTitle:Просмотр медиа"
@@ -155,10 +249,10 @@ in {
         "SUPER_SHIFT, C, exec, hyprctl reload"
         
         "SUPER, N, exec, ${nemo}"
-        "SUPER, RETURN, exec, ${alacritty}"
+        "SUPER, RETURN, exec, ${kitty}"
         "SUPER, D, exec, tofi-drun"
         "SUPER, L, exec, loginctl lock-session"
-        "SUPER, bracketright, exec, ${alacritty} -e ${python}"
+        "SUPER, bracketright, exec, ${kitty} -e ${python}"
         
         "SUPER, Left,  hy3:movefocus, l, , nowarp"
         "SUPER, Down,  hy3:movefocus, d, , nowarp"
@@ -176,6 +270,8 @@ in {
         ", XF86AudioLowerVolume, exec, ${wpctl} set-volume @DEFAULT_AUDIO_SINK@ 5%-"
         ", XF86AudioMute, exec, ${wpctl} set-mute @DEFAULT_AUDIO_SINK@ toggle"
         ", XF86AudioMicMute, exec, ${wpctl} set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
+
+        "ALT, F9, pass, class:^(com\.obsproject\.Studio)$"
       ];
       binde = (builtins.foldl' (a: b: a ++ b) [ ] (
         builtins.map (
@@ -235,8 +331,8 @@ in {
           }
           {
             timeout = 150;
-            on-timeout = "${brightnessctl} -sd ${keyboard_device} set 0";
-            on-resume = "${brightnessctl} -rd ${keyboard_device}";
+            on-timeout = "${brightnessctl} -sd ${keyboard_led_device} set 0";
+            on-resume = "${brightnessctl} -rd ${keyboard_led_device}";
           }
           {
             timeout = 300;
@@ -251,6 +347,40 @@ in {
       };
     };
     hyprpolkitagent.enable = true;
+    darkman = let
+      hyprctl-bin = "${pkgs.hyprland}/bin/hyprctl";
+      hy3_dark_palette = hy3_palette color_theme.dark;
+      hy3_light_palette = hy3_palette color_theme.light;
+    in {
+      darkModeScripts = {
+        hyprland = pkgs.writers.writeBash "darken-hyprland" (''
+          ${hyprctl-bin} hyprpaper reload ,"~/.wallpaper-dark.jpg"
+          ${hyprctl-bin} keyword general:col.active_border "${oklch2rgba_hex color_theme.dark.primary}"
+          ${hyprctl-bin} keyword general:col.inactive_border "${oklch2rgba_hex color_theme.dark.bg}" 
+        '' 
+          + "\n" 
+          + (pkgs.lib.strings.concatStringsSep "\n" (
+              pkgs.lib.attrsets.mapAttrsToList 
+                (name: color: "${hyprctl-bin} keyword plugin:hy3:tabs:${name} \"${color}\"") 
+                hy3_dark_palette
+            ))
+        );
+      };
+      lightModeScripts = {
+        hyprland = pkgs.writers.writeBash "lighten-hyprland" (''
+          ${hyprctl-bin} hyprpaper reload ,"~/.wallpaper-light.jpg"
+          ${hyprctl-bin} keyword general:col.active_border "${oklch2rgba_hex color_theme.light.primary}"
+          ${hyprctl-bin} keyword general:col.inactive_border "${oklch2rgba_hex color_theme.light.bg}" 
+        ''
+          + "\n" 
+          + (pkgs.lib.strings.concatStringsSep "\n" (
+              pkgs.lib.attrsets.mapAttrsToList 
+                (name: color: "${hyprctl-bin} keyword plugin:hy3:tabs:${name} \"${color}\"") 
+                hy3_light_palette
+            ))
+        );
+      };
+    };
   };
   programs = {
     hyprlock = {
@@ -288,13 +418,13 @@ in {
       enable = true;
       settings = {
         font = "Oranienbaum";
-        text-color = nix-colorizer.oklch.to.hex color_theme.text.active;
-        selection-color = nix-colorizer.oklch.to.hex (nix-colorizer.oklch.lighten color_theme.primary 0.2);
+        text-color = nix-colorizer.oklch.to.hex color_theme.dark.text.active;
+        selection-color = nix-colorizer.oklch.to.hex (nix-colorizer.oklch.lighten color_theme.dark.primary 0.2);
         prompt-text = "\"Run: \"";
         result-spacing = 25;
         width = "100%";
         height = "100%";
-        background-color = nix-colorizer.oklch.to.hex (color_theme.bg // { a = opacity; });
+        background-color = nix-colorizer.oklch.to.hex (color_theme.dark.bg // { a = opacity; });
         border-width = 0;
         outline-width = 0;
         padding-left = "35%";
@@ -316,6 +446,7 @@ in {
           "hyprland/submap"
         ];
         modules-right = [
+          "custom/darkman"
           "disk"
           "pulseaudio#out"
           "pulseaudio#mic"
@@ -341,7 +472,7 @@ in {
         "tray" = {
           spacing = 5;
         };
-        "hyprland/language" = {
+        "hyprland/language" = { # TODO: баг с отображением русской раскладки
           format = "{}";
           format-en = "US";
           format-ru = "RU";
@@ -406,57 +537,51 @@ in {
         };
         "disk" = {
           format = " {specific_used:0.1f}GB/{specific_total:1.0f}GB";
-          unit = "GB";
+          unit = "GiB";
           tooltip = false;
         };
+        "custom/darkman" = let
+          dark-icon = "";
+          light-icon = "";  
+        in {
+          escape = true;
+          interval = 1;
+          exec = "sh -c 'if [ $(darkman get) = \"dark\" ]; then echo \"${dark-icon}\"; else echo \"${light-icon}\"; fi'";
+          tooltip = false;
+          on-click = "darkman toggle";
+        };
       };
-      style = ''
-        window#waybar {
-          font-size: 14px;
-          font-family: "Iosevka", "Font Awesome 6 Free";
-          color: ${oklch2h color_theme.text.active};
-          background-color: transparent;
-        }
-
-        #waybar > box > box {
-          margin: 2px;
-          border-radius: 6px;
-        }
-
-        box.modules-right {
-          padding: 2px;
-          background-color: ${oklch2h (color_theme.bg // { a = opacity; })};
-        }
-
-        .module {
-          margin: 0px 10px;
-        }
-
-        .module#workspaces {
-          margin: 0;
-        }
-
-        #workspaces button {
-          padding: 4px;
-          margin: 0px 4px;
-          border-radius: 4px;
-          background-color: ${oklch2h (color_theme.bg // { a = opacity; })};
-        }
-
-        #workspaces button.active {
-          background-color: ${oklch2h (color_theme.primary // { a = opacity; })};
-        }
-
-        #workspaces button.urgent {
-          background-color: ${oklch2h (color_theme.alert // { a = opacity; })};
-        }
-
-        #submap.resize {
-          padding: 0px 1em;
-          border-radius: 4px;
-          background-color: ${oklch2h (color_theme.secondary // { a = opacity; })}
-        }
-      '';
+      style = waybar-style.dark;
+    };
+  };
+  systemd.user.tmpfiles.rules = [
+    "L %t/card-amd     - - - -   /dev/dri/by-path/pci-0000:05:00.0-card" # %t is $XDG_RUNTIME_DIR
+    "L %t/card-nvidia  - - - -   /dev/dri/by-path/pci-0000:01:00.0-card"
+  ];
+  xdg = {
+    configFile= {
+      uwsm-env-hyprland = {
+        executable = true;
+        target = "uwsm/env-hyprland";
+        text = ''
+          export AQ_DRM_DEVICES="$XDG_RUNTIME_DIR/card-nvidia:$XDG_RUNTIME_DIR/card-amd"
+          export LIBVA_DRIVER_NAME=nvidia
+          export __GLX_VENDOR_LIBRARY_NAME=nvidia
+        ''; # amd, а иначе nvidia
+      };
+      waybar-style-light = {
+        target = "waybar/style-light.css";
+        text = waybar-style.light;
+      };
+      waybar-style-dark = {
+        target = "waybar/style-dark.css";
+        text = waybar-style.dark;
+      };
+    };
+    portal.config.hyprland = {
+      default = [ "hyprland" "gtk" ];
+      "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
+      "org.freedesktop.impl.portal.Settings" = [ "darkman" ];
     };
   };
 }

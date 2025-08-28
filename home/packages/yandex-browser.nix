@@ -56,13 +56,13 @@ let
   version = {
     corporate = "24.1.3.843-1";
     beta = "24.4.1.918-1";
-    stable = "25.4.1.1132-1";
+    stable = "25.4.1.1213-1";
   }.${edition};
 
   hash = {
     corporate = "sha256-rI19YmsC2p2Dsi6Grd8IyNdpjMHWwET3wcVw5r7545M=";
     beta = "sha256-EQjjaTMPQKaULITEF+MQuY1lRVXuOjyiGWuGQtIpIz0=";
-    stable = "sha256-bnpg2VQNoWPXg1voea9VLw5HjrK9ShWXTiXDEYEQ1T8=";
+    stable = "sha256-Q4Ti8en18BMJ8HAXh8ZIkk6pCikEOMOr2JQLct0Hg3c=";
   }.${edition};
 
   app = {
@@ -106,7 +106,7 @@ in stdenv.mkDerivation rec {
     freetype
     gdk-pixbuf
     glib
-    gnome2.GConf
+    # gnome2.GConf
     gtk3
     libX11
     libXScrnSaver

@@ -12,7 +12,7 @@
   };
   
   nemo = "${pkgs.nemo}/bin/nemo";
-  alacritty = "${pkgs.alacritty}/bin/alacritty";
+  kitty = "${pkgs.kitty}/bin/kitty";
   python = "${python-pkg}/bin/python";
   dmenu = "${pkgs.dmenu}/bin/dmenu_run";
   i3lock = "${pkgs.i3lock}/bin/i3lock";
@@ -91,10 +91,10 @@ in {
         "${mod}+Shift+e" = "exec \"${i3-nagbar} -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'\"";
         "${mod}+r" = "mode resize";
 
-        "${mod}+Return" = "exec ${alacritty}";
+        "${mod}+Return" = "exec ${kitty}";
         "${mod}+d" = "exec ${dmenu}";
         "${mod}+l" = "exec \"${i3lock} -e -i ~/.wallpaper.png -t\"";
-        "${mod}+bracketright" = "exec \"${alacritty} -e ${python}\"";
+        "${mod}+bracketright" = "exec \"${kitty} -e ${python}\"";
         "--release ${mod}+grave" = "exec \"${flameshot} gui -c -p /tmp/screenshot.png\"";
         "--release Print" = "exec \"${flameshot} full -c -p /tmp/screenshot.png\"";
 
