@@ -31,7 +31,7 @@
       secondary = nix-colorizer.hex.to.oklch "#286223";
       alert = nix-colorizer.hex.to.oklch "#7e011c";
       text.active = nix-colorizer.hex.to.oklch "#ffffff";
-      text.inactive = text.active // { L = text.active.L * 0.5; };
+      text.inactive = text.active // { L = text.active.L * 0.75; };
     };
     light = rec {
       bg = nix-colorizer.hex.to.oklch "#b9d2df";
@@ -168,7 +168,7 @@ in {
         blur = {
           enabled = true;
           noise = 0.15;
-          passes = 3;
+          passes = 4;
           popups = true;
         };
       };
@@ -219,10 +219,11 @@ in {
       windowrule = [
         "opacity 0.8, class:kitty"
         "opacity 0.85, class:code"
+        "opacity 0.85, class:v2rayN"
         "opacity 0.85, class:org.telegram.desktop"
         "opacity 1.0, class:org.telegram.desktop, initialTitle:Просмотр медиа"
         "noanim, class:org.telegram.desktop, initialTitle:Просмотр медиа"
-        "noanim, class:flameshot"
+        "noanim, title:flameshot"
       ];
       layerrule = [ 
         "blur, waybar" 
@@ -563,10 +564,10 @@ in {
         executable = true;
         target = "uwsm/env-hyprland";
         text = ''
-          export AQ_DRM_DEVICES="$XDG_RUNTIME_DIR/card-nvidia:$XDG_RUNTIME_DIR/card-amd"
-          export LIBVA_DRIVER_NAME=nvidia
-          export __GLX_VENDOR_LIBRARY_NAME=nvidia
-        ''; # amd, а иначе nvidia
+          export AQ_DRM_DEVICES="$XDG_RUNTIME_DIR/card-amd:$XDG_RUNTIME_DIR/card-nvidia"
+          #export LIBVA_DRIVER_NAME=nvidia
+          #export __GLX_VENDOR_LIBRARY_NAME=nvidia
+        '';
       };
       waybar-style-light = {
         target = "waybar/style-light.css";
@@ -580,7 +581,7 @@ in {
     portal.config.hyprland = {
       default = [ "hyprland" "gtk" ];
       "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
-      "org.freedesktop.impl.portal.Settings" = [ "darkman" ];
+      "org.freedesktop.impl.portal.Settings" = [ "gtk" ];
     };
   };
 }

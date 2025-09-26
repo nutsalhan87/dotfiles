@@ -2,7 +2,7 @@
   description = "NixOS configuration";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-unstable";
+    nixpkgs.url = "nixpkgs/nixos-unstable"; # TODO: поменять на "github:NixOS/nixpkgs/nixos-unstable";ъ
     stable-nixpkgs.url = "nixpkgs/nixos-25.05";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     nix-colorizer.url = "github:nutsalhan87/nix-colorizer";
@@ -18,7 +18,15 @@
     };
   };
 
-  outputs = { nixpkgs, stable-nixpkgs, nix-colorizer, nixos-hardware, fenix, home-manager, ... }@inputs: let 
+  outputs = { 
+    nixpkgs, 
+    stable-nixpkgs, 
+    nix-colorizer, 
+    nixos-hardware, 
+    fenix, 
+    home-manager, 
+    ... 
+  }@inputs: let 
     system = "x86_64-linux";
   in {
     nixosConfigurations = {
@@ -36,6 +44,7 @@
       "nutsalhan87@lenovo" = home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs rec {
           inherit system;
+          config.allowUnfree = true;
         };
         modules = [ ./home/home.nix ];
         extraSpecialArgs = { 
@@ -43,6 +52,7 @@
           fenix = fenix.packages.${system};
           stable-pkgs = import stable-nixpkgs rec {
             inherit system;
+            config.allowUnfree = true;
           };
         };
       };

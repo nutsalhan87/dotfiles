@@ -18,8 +18,6 @@
 
 in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [ 
   {
-    nixpkgs.config.allowUnfreePredicate = (pkg: true); # workaround
-
     home = let 
       rust-toolchain = with fenix; combine (with complete; [
         rustc
@@ -79,12 +77,11 @@ in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [
         vlc
         mediainfo
         obs-studio
-        (callPackage ./packages/yandex-browser.nix {})
 
         # communcation
         zoom-us 
         tdesktop
-        webcord
+        dorion
   
         # documents
         libreoffice
@@ -98,7 +95,7 @@ in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [
         xorg.xev # чтобы узнать название клавиши
         pulseaudio
         htop
-        ncdu # для того, чтобы узнать, что сколько занимает
+        ncdu
         selectdefaultapplication
         unar
         tree
@@ -107,10 +104,10 @@ in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [
         progress
         zip
         linuxPackages.perf
-        hiddify-app
         amdgpu_top
         wl-clipboard
         tldr
+        v2rayn
 
         # development
         maven
@@ -127,8 +124,7 @@ in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [
         nodejs
         nodePackages.pnpm
         php
-        insomnia
-        shellcheck-minimal # для bash-ide расширения для vscode'а
+        shellcheck-minimal
         clang-tools
         poetry
       ];
@@ -171,6 +167,7 @@ in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [
             showDesktopNotification = false;
             showHelp = false;
             showSidePanelButton = true;
+            useGrimAdapter = true;
           };
         };
       };
@@ -201,6 +198,13 @@ in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [
     qt = {
       enable = true;
       platformTheme.name = "gtk3";
+    };
+
+    dconf.settings = {
+      "org/virt-manager/virt-manager/connections" = {
+        autoconnect = ["qemu:///system"];
+        uris = ["qemu:///system"];
+      };
     };
   }
   vscode-config

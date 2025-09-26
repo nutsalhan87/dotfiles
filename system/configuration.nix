@@ -45,6 +45,7 @@
     };
     tmp.cleanOnBoot = true;
     kernel.sysctl."kernel.sysrq" = 502;
+    kernelPackages = pkgs.linuxPackages_latest;
   };
 
   networking.hostName = "lenovo"; # Define your hostname.
@@ -132,6 +133,7 @@
       vim
       wget
       unzip
+      git
     ];
   };
 
@@ -141,10 +143,13 @@
     open-sans fira fira-code font-awesome
   ];
 
-  users.users.nutsalhan87 = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" "video" "adbusers" "libvirtd" "audio" "vboxusers" ];
-    shell = pkgs.fish;
+  users = {
+    users.nutsalhan87 = {
+      isNormalUser = true;
+      extraGroups = [ "wheel" "video" "adbusers" "libvirtd" "audio" ];
+      shell = pkgs.fish;
+    };
+    groups.libvirtd = {};
   };
 
   programs = {
@@ -155,6 +160,7 @@
       enable = true;
       withUWSM = true;
     };
+    virt-manager.enable = true;
   };
 
   virtualisation = {
@@ -162,7 +168,8 @@
       enable = true;
       setSocketVariable = true;
     };
-    virtualbox.host.enable = true;
+    libvirtd.enable = true;
+    spiceUSBRedirection.enable = true;
   };
 
   # Enable the OpenSSH daemon.
