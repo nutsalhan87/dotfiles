@@ -31,7 +31,7 @@
       secondary = nix-colorizer.hex.to.oklch "#286223";
       alert = nix-colorizer.hex.to.oklch "#7e011c";
       text.active = nix-colorizer.hex.to.oklch "#ffffff";
-      text.inactive = text.active // { L = text.active.L * 0.5; };
+      text.inactive = text.active // { L = text.active.L * 0.75; };
     };
     light = rec {
       bg = nix-colorizer.hex.to.oklch "#b9d2df";
@@ -137,13 +137,11 @@
   };
 
   wallpaper_path = "~/.wallpaper-dark.jpg";
-  keyboard_led_device = "platform::kbd_backlight";
 
   nemo = "${pkgs.nemo}/bin/nemo";
   kitty = "${pkgs.kitty}/bin/kitty";
   python = "${python-pkg}/bin/python";
   flameshot = "${flameshot-pkg}/bin/flameshot";
-  brightnessctl = "${pkgs.brightnessctl}/bin/brightnessctl";
   wpctl = "${pkgs.wireplumber}/bin/wpctl";
 
 in {
@@ -168,23 +166,14 @@ in {
         blur = {
           enabled = true;
           noise = 0.15;
-          passes = 3;
+          passes = 4;
           popups = true;
         };
       };
       input = {
         kb_model = "pc104";
         kb_layout = "us,ru";
-        kb_options = "grp:caps_toggle, grp_led:caps, compose:ralt";
-        scroll_method = "2fg";
-        touchpad = {
-          natural_scroll = true;
-        };
-      };
-      gestures = {
-        workspace_swipe = true;
-        workspace_swipe_forever = true;
-        workspace_swipe_direction_lock = false;
+        kb_options = "grp:caps_toggle, compose:ralt";
       };
       misc = {
         disable_hyprland_logo = true;
@@ -213,16 +202,16 @@ in {
           text_padding = 5;
         } // (hy3_palette color_theme.dark);
       };
-      monitor = [ 
-        "eDP-1, preferred, 0x0, 1"
-      ];
       windowrule = [
         "opacity 0.8, class:kitty"
         "opacity 0.85, class:code"
+        "opacity 0.85, class:Zulip"
+        "opacity 0.85, class:thunderbird"
+        "opacity 0.85, class:v2rayN"
         "opacity 0.85, class:org.telegram.desktop"
         "opacity 1.0, class:org.telegram.desktop, initialTitle:Просмотр медиа"
         "noanim, class:org.telegram.desktop, initialTitle:Просмотр медиа"
-        "noanim, class:flameshot"
+        "noanim, title:flameshot"
       ];
       layerrule = [ 
         "blur, waybar" 
@@ -263,12 +252,10 @@ in {
         "SUPER_SHIFT, Up, hy3:movewindow, u, once,"
         "SUPER_SHIFT, Right, hy3:movewindow, r, once,"
 
-        ", XF86MonBrightnessDown, exec, ${brightnessctl} set 5%-"
-        ", XF86MonBrightnessUp, exec, ${brightnessctl} set +5%"
         ", XF86AudioRaiseVolume, exec, ${wpctl} set-volume @DEFAULT_AUDIO_SINK@ 5%+"
         ", XF86AudioLowerVolume, exec, ${wpctl} set-volume @DEFAULT_AUDIO_SINK@ 5%-"
-        ", XF86AudioMute, exec, ${wpctl} set-mute @DEFAULT_AUDIO_SINK@ toggle"
-        ", XF86AudioMicMute, exec, ${wpctl} set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
+        # ", XF86AudioMute, exec, ${wpctl} set-mute @DEFAULT_AUDIO_SINK@ toggle"
+        # ", XF86AudioMicMute, exec, ${wpctl} set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
 
         "ALT, F9, pass, class:^(com\.obsproject\.Studio)$"
       ];
@@ -324,21 +311,11 @@ in {
         };
         listener = [
           {
-            timeout = 150;
-            on-timeout = "${brightnessctl} -s set 10%";
-            on-resume = "${brightnessctl} -r";
-          }
-          {
-            timeout = 150;
-            on-timeout = "${brightnessctl} -sd ${keyboard_led_device} set 0";
-            on-resume = "${brightnessctl} -rd ${keyboard_led_device}";
-          }
-          {
-            timeout = 300;
+            timeout = 600;
             on-timeout = "loginctl lock-session";
           }
           {
-            timeout = 330;
+            timeout = 630;
             on-timeout = "hyprctl dispatch dpms off";
             on-resume = "hyprctl dispatch dpms on";
           }
@@ -445,15 +422,13 @@ in {
           "hyprland/submap"
         ];
         modules-right = [
+          "custom/openvpn-office"
           "custom/darkman"
           "disk"
           "pulseaudio#out"
-          "pulseaudio#mic"
-          "backlight"
-          "battery"
+          # "pulseaudio#mic"
           "memory"
           "cpu"
-          "temperature"
           "clock"
           "hyprland/language"
           "tray"
@@ -471,7 +446,7 @@ in {
         "tray" = {
           spacing = 5;
         };
-        "hyprland/language" = { # TODO: баг с отображением русской раскладки
+        "hyprland/language" = {
           format = "{}";
           format-en = "US";
           format-ru = "RU";
@@ -481,12 +456,6 @@ in {
           format = " {:L%a %d.%m.%Y %H:%M:%S}";
           locale = "ru_RU.UTF-8";
           tooltip = false;
-        };
-        "temperature" = {
-          hwmon-path = "/sys/class/hwmon/hwmon2/temp1_input";
-          format = " {temperatureC}°";
-          tooltip = false;
-          critical-threshold = 90;
         };
         "cpu" = {
           interval = 1;
@@ -503,28 +472,15 @@ in {
           format = " {used:0.01f}GB/{total}GB {percentage}%";
           tooltip = false;
         };
-        "battery" = {
-          interval = 10;
-          format = "{icon} {capacity}%";
-          format-icons = [ "" "" "" "" "" ];
-          tooltip = false;
-        };
-        "backlight" = {
-          format = "{icon} {percent}%";
-          format-icons = [ "" "" ];
-          on-scroll-up = "${brightnessctl} set +5%";
-          on-scroll-down = "${brightnessctl} set 5%-";
-          tooltip = false;
-        };
-        "pulseaudio#mic" = {
-          format = "{format_source}";
-          format-source = "";
-          format-source-muted = "";
-          on-click = "${wpctl} set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
-          on-scroll-up = "";
-          on-scroll-down = "";
-          tooltip = false;
-        };
+        # "pulseaudio#mic" = {
+        #   format = "{format_source}";
+        #   format-source = "";
+        #   format-source-muted = "";
+        #   on-click = "${wpctl} set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
+        #   on-scroll-up = "";
+        #   on-scroll-down = "";
+        #   tooltip = false;
+        # };
         "pulseaudio#out" = {
           format = "{icon} {volume}%";
           format-icons = [ "" "" "" ];
@@ -549,13 +505,21 @@ in {
           tooltip = false;
           on-click = "darkman toggle";
         };
+        "custom/openvpn-office" = let
+          active-icon = "";
+          inactive-icon = "";
+        in {
+          interval = 1;
+          exec = "sh -c 'if sudo systemctl is-active openvpn-office.service 1>/dev/null; then echo  ${active-icon}; else echo  ${inactive-icon}; fi'";
+          tooltip = false;
+          on-click = "sh -c 'if sudo systemctl is-active openvpn-office.service; then sudo systemctl stop openvpn-office.service; else sudo systemctl start openvpn-office.service; fi'";
+        };
       };
       style = waybar-style.dark;
     };
   };
   systemd.user.tmpfiles.rules = [
-    "L %t/card-amd     - - - -   /dev/dri/by-path/pci-0000:05:00.0-card" # %t is $XDG_RUNTIME_DIR
-    "L %t/card-nvidia  - - - -   /dev/dri/by-path/pci-0000:01:00.0-card"
+    "L %t/card-nvidia  - - - -   /dev/dri/by-path/pci-0000:2b:00.0-card"
   ];
   xdg = {
     configFile= {
@@ -563,10 +527,10 @@ in {
         executable = true;
         target = "uwsm/env-hyprland";
         text = ''
-          export AQ_DRM_DEVICES="$XDG_RUNTIME_DIR/card-nvidia:$XDG_RUNTIME_DIR/card-amd"
+          export AQ_DRM_DEVICES="$XDG_RUNTIME_DIR/card-nvidia"
           export LIBVA_DRIVER_NAME=nvidia
           export __GLX_VENDOR_LIBRARY_NAME=nvidia
-        ''; # amd, а иначе nvidia
+        '';
       };
       waybar-style-light = {
         target = "waybar/style-light.css";
@@ -580,7 +544,7 @@ in {
     portal.config.hyprland = {
       default = [ "hyprland" "gtk" ];
       "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
-      "org.freedesktop.impl.portal.Settings" = [ "darkman" ];
+      "org.freedesktop.impl.portal.Settings" = [ "gtk" ];
     };
   };
 }

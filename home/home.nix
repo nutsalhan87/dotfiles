@@ -10,16 +10,13 @@
   ]));
   flameshot-pkg = pkgs.flameshot.override { enableWlrSupport = true; };
 
-  vscode-config = import ./config/vscode.nix { inherit pkgs; };
+  vscode-config = import ./config/vscode.nix { pkgs = stable-pkgs; };
   xdg-config = import ./config/xdg.nix { inherit pkgs; };
-  i3-config = import ./config/i3.nix { inherit pkgs nix-colorizer python-pkg flameshot-pkg; };
   hyprland-config = import ./config/hyprland.nix { inherit pkgs nix-colorizer python-pkg flameshot-pkg; };
   darkman-config = import ./config/darkman.nix { inherit pkgs python-pkg; };
 
 in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [ 
   {
-    nixpkgs.config.allowUnfreePredicate = (pkg: true); # workaround
-
     home = let 
       rust-toolchain = with fenix; combine (with complete; [
         rustc
@@ -32,7 +29,7 @@ in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [
     rec {
       username = "nutsalhan87";
       homeDirectory = "/home/nutsalhan87";
-      stateVersion = "22.05";
+      stateVersion = "25.05";
 
       file = {
         ".jdks/jdk8".source = pkgs.openjdk8;
@@ -63,11 +60,9 @@ in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [
         # creativity
         imagemagick
         krita
-        kdePackages.kdenlive
-        gimp
 
         # gaming
-        wineWowPackages.stagingFull
+        wineWow64Packages.waylandFull
         winetricks
         gzdoom
         steam-run
@@ -79,26 +74,22 @@ in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [
         vlc
         mediainfo
         obs-studio
-        (callPackage ./packages/yandex-browser.nix {})
 
         # communcation
-        zoom-us 
         tdesktop
-        webcord
+        zulip
   
         # documents
         libreoffice
         djview
+        # obsidian
 
         # utilities
         pavucontrol
         qpwgraph
-        qbittorrent
-        xclip
-        xorg.xev # чтобы узнать название клавиши
         pulseaudio
         htop
-        ncdu # для того, чтобы узнать, что сколько занимает
+        ncdu
         selectdefaultapplication
         unar
         tree
@@ -107,10 +98,10 @@ in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [
         progress
         zip
         linuxPackages.perf
-        hiddify-app
-        amdgpu_top
         wl-clipboard
         tldr
+        v2rayn
+        dnslookup
 
         # development
         maven
@@ -120,17 +111,16 @@ in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [
         gcc
         gdb
         gnumake
-        jetbrains.idea-community
-        jetbrains.pycharm-community
         umlet
         rust-toolchain
         nodejs
         nodePackages.pnpm
         php
-        insomnia
-        shellcheck-minimal # для bash-ide расширения для vscode'а
+        shellcheck-minimal
         clang-tools
         poetry
+        openssl
+        cryptsetup
       ];
 
       pointerCursor = {
@@ -157,6 +147,10 @@ in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [
           number = true;
         };
       };
+      thunderbird = {
+        enable = true;
+        profiles = {};
+      };
     };
 
     services = {
@@ -171,6 +165,7 @@ in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [
             showDesktopNotification = false;
             showHelp = false;
             showSidePanelButton = true;
+            useGrimAdapter = true;
           };
         };
       };
@@ -202,10 +197,16 @@ in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [
       enable = true;
       platformTheme.name = "gtk3";
     };
+
+    dconf.settings = {
+      "org/virt-manager/virt-manager/connections" = {
+        autoconnect = ["qemu:///system"];
+        uris = ["qemu:///system"];
+      };
+    };
   }
   vscode-config
   xdg-config
   hyprland-config 
-  i3-config
   darkman-config
 ]

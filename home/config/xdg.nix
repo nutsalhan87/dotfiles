@@ -7,8 +7,18 @@
       enable = true;
       readOnly = true;
       entries = [
-        "${pkgs.hiddify-app}/share/applications/hiddify.desktop"
+        "${pkgs.v2rayn}/share/applications/v2rayn.desktop"
       ];
+    };
+    desktopEntries = {
+      poweroff = {
+        name = "Power Off";
+        exec = "poweroff";
+      };
+      reboot = {
+        name = "Reboot";
+        exec = "reboot";
+      };
     };
     configFile = {
       kitty-dark-theme = {

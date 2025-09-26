@@ -20,9 +20,9 @@
     ];
 
   hardware = {
-    nvidia.powerManagement = {
-      enable = true;
-      finegrained = true;
+    nvidia = {
+      open = false;
+      powerManagement.enable = true;
     };
     graphics = {
       enable = true;
@@ -45,9 +45,10 @@
     };
     tmp.cleanOnBoot = true;
     kernel.sysctl."kernel.sysrq" = 502;
+    kernelPackages = pkgs.linuxPackages_latest;
   };
 
-  networking.hostName = "lenovo"; # Define your hostname.
+  networking.hostName = "office"; # Define your hostname.
   # Pick only one of the below networking options.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
   networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
@@ -68,10 +69,19 @@
   security = {
     rtkit.enable = true;
     pam.services.hyprlock = {};
+    sudo.extraRules = [
+      {
+        groups = [ "wheel" ];
+        commands = map (ctl-cmd: { 
+          command = "/run/current-system/sw/bin/systemctl ${ctl-cmd} openvpn-office.service";
+          options = [ "NOPASSWD" ]; 
+        }) [ "start" "stop" "is-active" ];
+      }
+    ];
   }; 
 
   services = {
-    logind.powerKey = "suspend";
+    logind.settings.Login.HandlePowerKey = "suspend";
     upower.enable = true;
     blueman.enable = true;
 
@@ -80,19 +90,6 @@
       authentication = pkgs.lib.mkForce ''
         local   all             all                                     trust
         host    all             all             127.0.0.1/32            trust
-      '';
-    };
-
-    xserver = {
-      enable = true;
-      xkb = {
-        layout = "us,ru";
-        options = "grp:caps_toggle, grp_led:caps, compose:ralt";      
-      };
-      windowManager.i3.enable = true;
-      screenSection = ''
-        Option "metamodes" "nvidia-auto-select +0+0 { ForceCompositionPipeline = On }"
-        Option "TearFree" "true"
       '';
     };
 
@@ -115,6 +112,12 @@
       pulse.enable = true;
     };
     pulseaudio.enable = false;
+
+    openvpn.servers.office = {
+      config = '' config /root/.config/openvpn/office.ovpn '';
+      authUserPass = "/root/.config/openvpn/office.auth";
+      updateResolvConf = true;
+    };
   };
 
   environment = {
@@ -132,6 +135,7 @@
       vim
       wget
       unzip
+      git
     ];
   };
 
@@ -141,10 +145,13 @@
     open-sans fira fira-code font-awesome
   ];
 
-  users.users.nutsalhan87 = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" "video" "adbusers" "libvirtd" "audio" "vboxusers" ];
-    shell = pkgs.fish;
+  users = {
+    users.nutsalhan87 = {
+      isNormalUser = true;
+      extraGroups = [ "wheel" "video" "adbusers" "libvirtd" "audio" ];
+      shell = pkgs.fish;
+    };
+    groups.libvirtd = {};
   };
 
   programs = {
@@ -155,6 +162,7 @@
       enable = true;
       withUWSM = true;
     };
+    virt-manager.enable = true;
   };
 
   virtualisation = {
@@ -162,17 +170,14 @@
       enable = true;
       setSocketVariable = true;
     };
-    virtualbox.host.enable = true;
+    libvirtd.enable = true;
+    spiceUSBRedirection.enable = true;
   };
 
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
+  networking.firewall = {
+    enable = true;
+    allowedTCPPorts = [ 80 443 ];
+  };
 
   # Copy the NixOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you
@@ -185,5 +190,5 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "22.05"; # Did you read the comment?
+  system.stateVersion = "25.05"; # Did you read the comment?
 }
