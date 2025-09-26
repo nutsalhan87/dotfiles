@@ -1,4 +1,4 @@
-{ pkgs, nix-colorizer, python-pkg, flameshot-pkg, ui-scale }: let
+{ pkgs, nix-colorizer, python-pkg, flameshot-pkg }: let
   oklch2rgba = oklch: let
     round = x: let 
       ceiled = builtins.ceil x; 
@@ -214,8 +214,7 @@ in {
         } // (hy3_palette color_theme.dark);
       };
       monitor = [ 
-        "eDP-1, preferred, 0x0, ${toString ui-scale}"
-        "HDMI-A-1, preferred, auto, 1.25"
+        "eDP-1, preferred, 0x0, 1"
       ];
       windowrule = [
         "opacity 0.8, class:kitty"

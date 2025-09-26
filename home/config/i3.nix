@@ -1,4 +1,4 @@
-{ pkgs, nix-colorizer, python-pkg, flameshot-pkg, ui-scale }: let
+{ pkgs, nix-colorizer, python-pkg, flameshot-pkg }: let
   color_theme = let
     text.active = "#ffffff";
     text.neutral = nix-colorizer.hex.darken text.active 0.25;
@@ -10,6 +10,8 @@
     alert = "#5e3333";
     inherit text;
   };
+
+  ui-scale = 1;
   
   nemo = "${pkgs.nemo}/bin/nemo";
   kitty = "${pkgs.kitty}/bin/kitty";

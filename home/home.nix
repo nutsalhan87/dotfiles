@@ -10,12 +10,10 @@
   ]));
   flameshot-pkg = pkgs.flameshot.override { enableWlrSupport = true; };
 
-  ui-scale = 1;
-  
   vscode-config = import ./config/vscode.nix { inherit pkgs; };
   xdg-config = import ./config/xdg.nix { inherit pkgs; };
-  i3-config = import ./config/i3.nix { inherit pkgs nix-colorizer python-pkg flameshot-pkg ui-scale; };
-  hyprland-config = import ./config/hyprland.nix { inherit pkgs nix-colorizer python-pkg flameshot-pkg ui-scale; };
+  i3-config = import ./config/i3.nix { inherit pkgs nix-colorizer python-pkg flameshot-pkg; };
+  hyprland-config = import ./config/hyprland.nix { inherit pkgs nix-colorizer python-pkg flameshot-pkg; };
   darkman-config = import ./config/darkman.nix { inherit pkgs python-pkg; };
 
 in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [ 
