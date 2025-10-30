@@ -79,7 +79,7 @@
     style = colors: with colors; ''
       window#waybar {
         font-size: 14px;
-        font-family: "Iosevka", "Font Awesome 6 Free";
+        font-family: "Iosevka", "Font Awesome 7 Free";
         color: ${text_color};
         background-color: transparent;
       }

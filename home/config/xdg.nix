@@ -29,6 +29,7 @@
         target = "kitty/light-theme.auto.conf";
         source = pkgs.kitty-themes + /share/kitty-themes/themes/Alabaster.conf;
       };
+      "mimeapps.list".force = true;
     };
     dataFile = {
       oranienbaum = {

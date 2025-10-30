@@ -97,11 +97,12 @@ in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [
         xviewer
         progress
         zip
-        linuxPackages.perf
+        perf
         wl-clipboard
         tldr
         v2rayn
         dnslookup
+        sshfs
 
         # development
         maven
