@@ -1,7 +1,7 @@
-{ pkgs }:
+{ pkgs, ... }:
 
 {
-  programs.vscode = {
+  config.programs.vscode = {
     enable = true;
     mutableExtensionsDir = false;
     profiles.default.extensions = with pkgs.vscode-extensions; [
@@ -13,6 +13,7 @@
       ms-azuretools.vscode-docker
       ms-toolsai.jupyter
       vscjava.vscode-java-pack
+      ms-vscode.makefile-tools
     ] ++ (with pkgs.vscode-extensions.ms-python; [ python debugpy vscode-pylance black-formatter ]);
   };
 }

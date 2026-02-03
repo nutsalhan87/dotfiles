@@ -46,19 +46,26 @@
 
     homeConfigurations = {
       "nutsalhan87@office" = home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs rec {
+        pkgs = import nixpkgs ({
           inherit system;
-          config.allowUnfree = true;
-        };
-        modules = [ ./home/home.nix ];
+        } // (import ./nixpkgs.nix));
+        modules = [ 
+          ./home/home.nix
+        ];
         extraSpecialArgs = { 
           inherit nix-colorizer;
           fenix = fenix.packages.${system};
-          stable-pkgs = import stable-nixpkgs rec {
+          stable-pkgs = import stable-nixpkgs ({
             inherit system; 
-            config.allowUnfree = true;
-          };
+          } // (import ./nixpkgs.nix));
         };
+      };
+    };
+
+    templates = {
+      devShell = {
+        path = ./templates/dev-shell;
+        description = "Template flake with empty devShell";
       };
     };
   };

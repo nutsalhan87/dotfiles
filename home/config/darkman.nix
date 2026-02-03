@@ -1,8 +1,7 @@
-{ pkgs, python-pkg }:
+{ pkgs, ... }:
 
 {
   services.darkman = let
-    python-bin = pkgs.lib.getExe python-pkg;
     vscode-theme-setter = ../assets/vscode.py;
   in {
     enable = true;
@@ -16,7 +15,7 @@
           /org/gnome/desktop/interface/color-scheme "'prefer-dark'"
       '';
       vscode = ''
-        ${python-bin} ${vscode-theme-setter} 'Default Dark Modern'
+        ${pkgs.python3}/bin/python3 ${vscode-theme-setter} 'Default Dark Modern'
       '';
     };
     lightModeScripts = {
@@ -29,7 +28,7 @@
           /org/gnome/desktop/interface/color-scheme "'prefer-light'"
       '';
       vscode = ''
-        ${python-bin} ${vscode-theme-setter} 'Default Light Modern'
+        ${pkgs.python3}/bin/python3 ${vscode-theme-setter} 'Default Light Modern'
       '';
     };
   };
