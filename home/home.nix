@@ -7,6 +7,7 @@
     matplotlib
     ipykernel ipympl
     requests
+    black
   ]));
   flameshot-pkg = pkgs.flameshot.override { enableWlrSupport = true; };
 
@@ -153,6 +154,7 @@ in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [
           number = true;
         };
       };
+      chromium.enable = true;
     };
 
     services = {

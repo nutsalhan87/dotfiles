@@ -47,16 +47,6 @@
     };
     mimeApps = {
       enable = true;
-      associations.added = {
-        "x-scheme-handler/tg" = [ 
-          "userapp-Telegram Desktop-AQATR1.desktop" 
-          "userapp-Telegram Desktop-EWUET1.desktop" 
-          "userapp-Telegram Desktop-XT3IV1.desktop" 
-          "userapp-Telegram Desktop-3MDWW1.desktop" 
-          "userapp-Telegram Desktop-DQS9Z1.desktop" 
-          "userapp-Telegram Desktop-TGDS01.desktop"
-        ];
-      };
       defaultApplications = {
         "x-scheme-handler/tg" = "userapp-Telegram Desktop-TGDS01.desktop";
         "image/heif" = "feh.desktop";

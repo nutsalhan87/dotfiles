@@ -136,7 +136,10 @@
     light = style light-colors;
   };
 
-  wallpaper_path = "~/.wallpaper-dark.jpg";
+  wallpaper_path = {
+    dark = "~/.wallpaper-dark.jpg";
+    light = "~/.wallpaper-light.jpg";
+  };
   keyboard_led_device = "platform::kbd_backlight";
 
   nemo = "${pkgs.nemo}/bin/nemo";
@@ -311,8 +314,8 @@ in {
     hyprpaper = {
       enable = true;
       settings = {
-        preload = [ wallpaper_path ];
-        wallpaper = [ ",${wallpaper_path}" ];
+        preload = [ wallpaper_path.dark ];
+        wallpaper = [ ",${wallpaper_path.dark}" ];
       };
     };
     hypridle = {
@@ -354,7 +357,7 @@ in {
     in {
       darkModeScripts = {
         hyprland = pkgs.writers.writeBash "darken-hyprland" (''
-          ${hyprctl-bin} hyprpaper reload ,"~/.wallpaper-dark.jpg"
+          ${hyprctl-bin} hyprpaper reload ,"${wallpaper_path.dark}"
           ${hyprctl-bin} keyword general:col.active_border "${oklch2rgba_hex color_theme.dark.primary}"
           ${hyprctl-bin} keyword general:col.inactive_border "${oklch2rgba_hex color_theme.dark.bg}" 
         '' 
@@ -368,7 +371,7 @@ in {
       };
       lightModeScripts = {
         hyprland = pkgs.writers.writeBash "lighten-hyprland" (''
-          ${hyprctl-bin} hyprpaper reload ,"~/.wallpaper-light.jpg"
+          ${hyprctl-bin} hyprpaper reload ,"${wallpaper_path.light}"
           ${hyprctl-bin} keyword general:col.active_border "${oklch2rgba_hex color_theme.light.primary}"
           ${hyprctl-bin} keyword general:col.inactive_border "${oklch2rgba_hex color_theme.light.bg}" 
         ''
@@ -392,7 +395,7 @@ in {
         background = [
           {
             monitor = "";
-            path = wallpaper_path;
+            path = wallpaper_path.dark;
             blur_passes = 3;
             noise = 0.05;
           }
