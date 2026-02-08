@@ -26,13 +26,13 @@
   fileSystems."/mnt/c" = 
     { device = "/dev/nvme0n1p3";
       fsType = "ntfs";
-      options = [ "rw" "uid=1000" ];
+      options = [ "rw" "uid=1000" "gid=100" "dmask=027" "fmask=137" ];
     };
   
   fileSystems."/mnt/d" = 
     { device = "/dev/sda2";
       fsType = "ntfs";
-      options = [ "rw" "uid=1000" ];
+      options = [ "rw" "uid=1000" "gid=100" "dmask=027" "fmask=137" ];
     };
 
   swapDevices =
