@@ -9,8 +9,13 @@ in {
         hyprpaper = {
           enable = true;
           settings = {
-            preload = [ wallpaper_path.dark ];
-            wallpaper = [ ",${wallpaper_path.dark}" ];
+            wallpaper = [ 
+              {
+                monitor = "";
+                path = wallpaper_path.dark;
+              }
+            ];
+            splash = false;
           };
         };
         hypridle = {

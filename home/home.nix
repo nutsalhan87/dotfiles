@@ -51,6 +51,7 @@ in {
       # creativity
       imagemagick
       krita
+      inkscape
 
       # gaming
       wineWow64Packages.waylandFull
@@ -69,7 +70,7 @@ in {
       xviewer
 
       # communcation
-      tdesktop
+      telegram-desktop
       zulip
 
       # documents
@@ -94,6 +95,8 @@ in {
       dnslookup
       sshfs
       cryptsetup
+      android-tools
+      jq
 
       # development
       maven
@@ -134,6 +137,25 @@ in {
     firefox.enable = true;
     fish.enable = true;
     chromium.enable = true;
+    ssh = {
+      enable = true;
+      enableDefaultConfig = false;
+      matchBlocks."*" = {
+        forwardAgent = false;
+        addKeysToAgent = "no";
+        compression = false;
+        serverAliveInterval = 0;
+        serverAliveCountMax = 3;
+        hashKnownHosts = false;
+        userKnownHostsFile = "~/.ssh/known_hosts";
+        controlMaster = "no";
+        controlPath = "~/.ssh/master-%r@%n:%p";
+        controlPersist = "no";
+        setEnv = {
+          TERM = "xterm-256color";
+        };
+      };
+    };
     kitty = {
       enable = true;
       themeFile = "Alabaster_Dark";

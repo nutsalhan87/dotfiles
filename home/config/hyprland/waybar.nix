@@ -1,6 +1,7 @@
 { pkgs, lib, config, nix-colorizer, ... }: let
   _hyprland = config.my._hyprland;
   color_theme = _hyprland.color_theme;
+  gaps = _hyprland.gaps;
   oklch2rgba = _hyprland.oklch2rgba;
   wpctl = _hyprland.wpctl;
   opacity = _hyprland.opacity;
@@ -30,49 +31,59 @@
         background-color: transparent;
       }
 
-      #waybar > box > box {
-        margin: 0px 5px 5px;
-        border-radius: 6px;
+      box.horizontal {
+        min-height: 2.25em;
       }
 
-      box.modules-right {
-        padding: 2px;
-        background-color: ${bg_color};
+      #waybar > box > box {
+        margin: 0px ${toString gaps}px ${toString gaps}px;
       }
 
       .module {
-        margin: 0px 10px;
+        padding: 0 1em;
+        margin: 0 calc(${toString gaps}px / 2);
+        border-radius: 4px;
+      }
+
+      widget:first-child > .module {
+        margin-left: 0;
+      }
+
+      widget:last-child > .module {
+        margin-right: 0;
+      }
+
+      .modules-right .module {
+        background-color: ${bg_color};
       }
 
       .module#workspaces {
-        margin: 0;
+        padding: unset;
       }
 
-      #workspaces button {
-        padding: 4px;
-        margin: 0px 2px;
+      .module#workspaces button {
+        padding: 0 calc(1em / 3);
+        margin: 0 calc(${toString gaps}px / 2);
         border-radius: 4px;
         color: ${text_color};
         background-color: ${bg_color};
       }
 
-      #workspaces button:first-child {
+      .module#workspaces button:first-child {
         margin-left: 0;
       }
 
-      #workspaces button.active {
+      .module#workspaces button.active {
         color: ${text_color_contrast};
         background-color: ${primary_color};
       }
 
-      #workspaces button.urgent {
+      .module#workspaces button.urgent {
         color: ${text_color_contrast};
         background-color: ${alert_color};
       }
 
-      #submap.resize {
-        padding: 0px 1em;
-        border-radius: 4px;
+      .module#submap.resize {
         color: ${text_color_contrast};
         background-color: ${secondary_color};
       }
@@ -140,7 +151,7 @@ in {
               cores_idx = lib.lists.range 1 (cores - 1);
               icons = builtins.foldl' (a: b: a + "{icon${toString b}}") "{icon0}" cores_idx;
             in
-              " " + icons + " {usage}% {avg_frequency}GHz";
+              " " + icons + " {usage}% {avg_frequency:0.01f}GHz";
             format-icons = [ "▁" "▂" "▃" "▄" "▅" "▆" "▇" "█" ];
           };
           "memory" = {

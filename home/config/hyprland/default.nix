@@ -34,7 +34,7 @@
       text.inactive = text.active // { L = text.active.L * 0.75; };
     };
     light = rec {
-      bg = nix-colorizer.hex.to.oklch "#b9d2df";
+      bg = nix-colorizer.hex.to.oklch "#dae9f2";
       primary = nix-colorizer.hex.to.oklch "#036896";
       secondary = nix-colorizer.hex.to.oklch "#588b53";
       alert = nix-colorizer.hex.to.oklch "#c22e3e";
@@ -42,6 +42,7 @@
       text.inactive = text.active // { L = text.active.L * 0.2; };
     };
   };
+  gaps = 5;
   opacity = 0.75;
 
   hy3_palette = theme: let
@@ -82,10 +83,11 @@ in {
     is-nvidia = lib.mkEnableOption "Hyprland Nvidia support";
     _hyprland = {
       color_theme = lib.mkAnything color_theme;
+      opacity = lib.mkAnything opacity;
+      gaps = lib.mkAnything gaps;
       hy3_palette = lib.mkAnything hy3_palette;
       oklch2rgba = lib.mkAnything oklch2rgba;
       oklch2rgba_hex = lib.mkAnything oklch2rgba_hex;
-      opacity = lib.mkAnything opacity;
       wallpaper_path = lib.mkAnything wallpaper_path;
     };
   };

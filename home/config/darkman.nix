@@ -32,12 +32,4 @@
       '';
     };
   };
-
-  systemd.user.services = {
-    darkman = {
-      Unit = {
-        After = "wayland-wm@Hyprland.service";
-      };
-    };
-  };
 }

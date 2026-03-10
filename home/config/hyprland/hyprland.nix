@@ -1,6 +1,7 @@
 { pkgs, lib, config, nix-colorizer, ... }: let
   _hyprland = config.my._hyprland;
   color_theme = _hyprland.color_theme;
+  gaps = _hyprland.gaps;
   opacity = _hyprland.opacity;
   oklch2rgba = _hyprland.oklch2rgba;
   oklch2rgba_hex = _hyprland.oklch2rgba_hex;
@@ -29,7 +30,8 @@ in {
           general = {
             layout = "hy3";
             border_size = 2;
-            gaps_out = 5;
+            gaps_out = gaps;
+            gaps_in = gaps / 2;
             resize_on_border = true;
             "col.active_border" = oklch2rgba_hex color_theme.dark.primary;
             "col.inactive_border" = oklch2rgba_hex color_theme.dark.bg;
@@ -69,6 +71,7 @@ in {
               from_top = true;
               radius = 4;
               height = 24;
+              padding = gaps;
               border_width = 2;
               text_center = false;
               text_font = "Iosevka";
@@ -77,20 +80,20 @@ in {
             } // (hy3_palette color_theme.dark);
           };
           windowrule = [
-            "opacity 0.8, class:kitty"
-            "opacity 0.85, class:code"
-            "opacity 0.85, class:Zulip"
-            "opacity 0.85, class:thunderbird"
-            "opacity 0.85, class:v2rayN"
-            "opacity 0.85, class:org.telegram.desktop"
-            "opacity 1.0, class:org.telegram.desktop, initialTitle:Просмотр медиа"
-            "noanim, class:org.telegram.desktop, initialTitle:Просмотр медиа"
-            "noanim, title:flameshot"
+            "match:class kitty, opacity 0.8"
+            "match:class code, opacity 0.85"
+            "match:class Zulip, opacity 0.85"
+            "match:class thunderbird, opacity 0.85"
+            "match:class v2rayN, opacity 0.85"
+            "match:class org.telegram.desktop, opacity 0.85"
+            "match:class org.telegram.desktop, match:initial_title Просмотр медиа, opacity 1.0"
+            "match:class org.telegram.desktop, match:initial_title Просмотр медиа, no_anim on"
+            "match:title flameshot, no_anim on"
           ];
           layerrule = [ 
-            "blur, waybar" 
-            "ignorezero, waybar"
-            "blur, launcher" 
+            "blur on, match:namespace waybar" 
+            "ignore_alpha 0, match:namespace waybar"
+            "blur on, match:namespace launcher" 
           ];
           animation = [
             "global, 1, 3, default"
@@ -100,7 +103,8 @@ in {
             "SUPER_SHIFT, Q, hy3:killactive"
             "SUPER, H, hy3:makegroup, h, ,"
             "SUPER, V, hy3:makegroup, v, ,"
-            "SUPER, F, fullscreen, 0"
+            "SUPER, F, fullscreenstate, 2, -1"
+            "SUPER_SHIFT, F, fullscreenstate, -1, 2"
             "SUPER, W, hy3:changegroup, toggletab"
             "SUPER, E, hy3:changegroup, opposite"
             "SUPER, SPACE, hy3:togglefocuslayer, nowarp"
@@ -141,7 +145,10 @@ in {
                 "SUPER_SHIFT, ${key}, hy3:movetoworkspace, ${ws}, "
               ]
             ) (lib.lists.range 0 9)
-          ));
+          )) ++ [
+            "SUPER, TAB, workspace, e+1"
+            "SUPER_SHIFT, TAB, workspace, e-1"
+          ];
           bindr = [
             "SUPER, grave, exec, ${flameshot} gui -c -p /tmp/screenshot.png"
           ];

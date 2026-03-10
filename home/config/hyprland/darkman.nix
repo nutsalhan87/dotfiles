@@ -11,9 +11,14 @@ in {
       hy3_dark_palette = hy3_palette color_theme.dark;
       hy3_light_palette = hy3_palette color_theme.light;
     in {
+      enable = true;
+      settings = { # bug: файл настроек не генерируется, если settings = {}, а без этого darkman падает
+        dbusserver = true;
+        portal = true;
+      };
       darkModeScripts = {
         hyprland = pkgs.writers.writeBash "darken-hyprland" (''
-          ${hyprctl-bin} hyprpaper reload ,"~/.wallpaper-dark.jpg"
+          ${hyprctl-bin} hyprpaper wallpaper ",~/.wallpaper-dark.jpg"
           ${hyprctl-bin} keyword general:col.active_border "${oklch2rgba_hex color_theme.dark.primary}"
           ${hyprctl-bin} keyword general:col.inactive_border "${oklch2rgba_hex color_theme.dark.bg}" 
         '' 
@@ -27,7 +32,7 @@ in {
       };
       lightModeScripts = {
         hyprland = pkgs.writers.writeBash "lighten-hyprland" (''
-          ${hyprctl-bin} hyprpaper reload ,"~/.wallpaper-light.jpg"
+          ${hyprctl-bin} hyprpaper wallpaper ",~/.wallpaper-light.jpg"
           ${hyprctl-bin} keyword general:col.active_border "${oklch2rgba_hex color_theme.light.primary}"
           ${hyprctl-bin} keyword general:col.inactive_border "${oklch2rgba_hex color_theme.light.bg}" 
         ''
@@ -38,6 +43,13 @@ in {
                 hy3_light_palette
             ))
         );
+      };
+    };
+    systemd.user.services = {
+      darkman = {
+        Unit = {
+          After = "wayland-wm@hyprland.desktop.service";
+        };
       };
     };
   };
