@@ -1,47 +1,50 @@
-{ pkgs }:
+{ pkgs, lib, config, ... }:
 
 {
-  xdg = {
-    enable = true;
-    autostart = {
+  config = {
+    home.preferXdgDirectories = true;
+    xdg = {
       enable = true;
-      readOnly = true;
-      entries = [ ];
-    };
-    desktopEntries = {
-      poweroff = {
-        name = "Power Off";
-        exec = "poweroff";
+      autostart = {
+        enable = true;
+        readOnly = true;
+        entries = [ ];
       };
-      reboot = {
-        name = "Reboot";
-        exec = "reboot";
+      desktopEntries = {
+        poweroff = {
+          name = "Power Off";
+          exec = "poweroff";
+        };
+        reboot = {
+          name = "Reboot";
+          exec = "reboot";
+        };
       };
-    };
-    configFile = {
-      kitty-dark-theme = {
-        target = "kitty/dark-theme.auto.conf";
-        source = pkgs.kitty-themes + /share/kitty-themes/themes/Alabaster_Dark.conf;
+      configFile = {
+        kitty-dark-theme = {
+          target = "kitty/dark-theme.auto.conf";
+          source = pkgs.kitty-themes + /share/kitty-themes/themes/Alabaster_Dark.conf;
+        };
+        kitty-light-theme = {
+          target = "kitty/light-theme.auto.conf";
+          source = pkgs.kitty-themes + /share/kitty-themes/themes/Alabaster.conf;
+        };
       };
-      kitty-light-theme = {
-        target = "kitty/light-theme.auto.conf";
-        source = pkgs.kitty-themes + /share/kitty-themes/themes/Alabaster.conf;
+      dataFile = {
+        oranienbaum = {
+          target = "fonts/Oranienbaum-Regular.ttf";
+          source = ../assets/Oranienbaum-Regular.ttf;
+        };
       };
-    };
-    dataFile = {
-      oranienbaum = {
-        target = "fonts/Oranienbaum-Regular.ttf";
-        source = ../assets/Oranienbaum-Regular.ttf;
+      portal = {
+        enable = lib.mkForce true;
+        xdgOpenUsePortal = true;
+        extraPortals = with pkgs; [
+          xdg-desktop-portal-gtk
+          xdg-desktop-portal-hyprland
+          darkman
+        ];
       };
-    };
-    portal = {
-      enable = pkgs.lib.mkForce true;
-      xdgOpenUsePortal = true;
-      extraPortals = with pkgs; [
-        xdg-desktop-portal-gtk
-        xdg-desktop-portal-hyprland
-        darkman
-      ];
     };
   };
 }

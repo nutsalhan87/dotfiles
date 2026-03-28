@@ -20,9 +20,12 @@
     ];
 
   hardware = {
-    nvidia.powerManagement = {
-      enable = true;
-      finegrained = true;
+    nvidia = {
+      open = false;
+      powerManagement = {
+        enable = true;
+        finegrained = true;
+      };
     };
     graphics = {
       enable = true;
@@ -142,6 +145,10 @@
       withUWSM = true;
     };
     virt-manager.enable = true;
+    obs-studio = {
+      enable = true;
+      enableVirtualCamera = true;
+    };
   };
 
   virtualisation = {

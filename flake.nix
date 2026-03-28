@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    stable-nixpkgs.url = "github:NixOS/nixpkgs//nixos-25.11";
+    stable-nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     nix-colorizer.url = "github:nutsalhan87/nix-colorizer";
     
@@ -42,19 +42,26 @@
 
     homeConfigurations = {
       "nutsalhan87@lenovo" = home-manager.lib.homeManagerConfiguration {
-        pkgs = import nixpkgs rec {
+        pkgs = import nixpkgs ({
           inherit system;
-          config.allowUnfree = true;
-        };
-        modules = [ ./home/home.nix ];
+        } // (import ./nixpkgs.nix));
+        modules = [ 
+          ./home/home.nix
+        ];
         extraSpecialArgs = { 
           inherit nix-colorizer;
           fenix = fenix.packages.${system};
-          stable-pkgs = import stable-nixpkgs rec {
-            inherit system;
-            config.allowUnfree = true;
-          };
+          stable-pkgs = import stable-nixpkgs ({
+            inherit system; 
+          } // (import ./nixpkgs.nix));
         };
+      };
+    };
+
+    templates = {
+      devShell = {
+        path = ./templates/dev-shell;
+        description = "Template flake with empty devShell";
       };
     };
   };
