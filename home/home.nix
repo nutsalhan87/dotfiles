@@ -13,7 +13,6 @@
 
   vscode-config = import ./config/vscode.nix { inherit pkgs; };
   xdg-config = import ./config/xdg.nix { inherit pkgs; };
-  i3-config = import ./config/i3.nix { inherit pkgs nix-colorizer python-pkg flameshot-pkg; };
   hyprland-config = import ./config/hyprland.nix { inherit pkgs nix-colorizer python-pkg flameshot-pkg; };
   darkman-config = import ./config/darkman.nix { inherit pkgs python-pkg; };
 
@@ -62,11 +61,10 @@ in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [
         # creativity
         imagemagick
         krita
-        kdePackages.kdenlive
         gimp
 
         # gaming
-        wineWowPackages.stagingFull
+        wineWow64Packages.stagingFull
         winetricks
         gzdoom
         steam-run
@@ -81,8 +79,7 @@ in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [
 
         # communcation
         zoom-us 
-        tdesktop
-        dorion
+        telegram-desktop
   
         # documents
         libreoffice
@@ -92,8 +89,7 @@ in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [
         pavucontrol
         qpwgraph
         qbittorrent
-        xclip
-        xorg.xev # чтобы узнать название клавиши
+        xev # чтобы узнать название клавиши
         pulseaudio
         htop
         ncdu
@@ -104,11 +100,12 @@ in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [
         xviewer
         progress
         zip
-        linuxPackages.perf
+        perf
         amdgpu_top
         wl-clipboard
         tldr
         v2rayn
+        sing-box
 
         # development
         maven
@@ -118,8 +115,6 @@ in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [
         gcc
         gdb
         gnumake
-        jetbrains.idea-community
-        jetbrains.pycharm-community
         umlet
         rust-toolchain
         nodejs
@@ -212,6 +207,5 @@ in builtins.foldl' (a: b: stable-pkgs.lib.attrsets.recursiveUpdate a b) {} [
   vscode-config
   xdg-config
   hyprland-config 
-  i3-config
   darkman-config
 ]

@@ -2,8 +2,8 @@
   description = "NixOS configuration";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-unstable"; # TODO: поменять на "github:NixOS/nixpkgs/nixos-unstable";ъ
-    stable-nixpkgs.url = "nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    stable-nixpkgs.url = "github:NixOS/nixpkgs//nixos-25.11";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     nix-colorizer.url = "github:nutsalhan87/nix-colorizer";
     

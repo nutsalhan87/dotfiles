@@ -72,7 +72,7 @@
   }; 
 
   services = {
-    logind.powerKey = "suspend";
+    logind.settings.Login.HandlePowerKey = "suspend";
     upower.enable = true;
     blueman.enable = true;
 
@@ -81,19 +81,6 @@
       authentication = pkgs.lib.mkForce ''
         local   all             all                                     trust
         host    all             all             127.0.0.1/32            trust
-      '';
-    };
-
-    xserver = {
-      enable = true;
-      xkb = {
-        layout = "us,ru";
-        options = "grp:caps_toggle, grp_led:caps, compose:ralt";      
-      };
-      windowManager.i3.enable = true;
-      screenSection = ''
-        Option "metamodes" "nvidia-auto-select +0+0 { ForceCompositionPipeline = On }"
-        Option "TearFree" "true"
       '';
     };
 
@@ -120,12 +107,6 @@
 
   environment = {
     sessionVariables = {
-      LD_LIBRARY_PATH = let
-        inputs = with pkgs; [
-          xorg.libX11 xorg.libXcomposite xorg.libXcursor xorg.libXdamage xorg.libXext xorg.libXfixes
-          xorg.libXi xorg.libXrandr xorg.libXrender xorg.libXtst xorg.libxcb xorg.xcbutilkeysyms xorg.libXxf86vm
-        ];
-      in builtins.foldl' (a: b: "${a}:${b}/lib") "/run/opengl-driver/lib:/run/opengl-driver-32/lib" inputs;
       NIXOS_OZONE_WL = "1";
     };
 
@@ -134,11 +115,12 @@
       wget
       unzip
       git
+      android-tools
     ];
   };
 
   fonts.packages = with pkgs; [
-    iosevka-bin noto-fonts noto-fonts-emoji noto-fonts-cjk-sans liberation_ttf unscii
+    iosevka-bin noto-fonts noto-fonts-color-emoji noto-fonts-cjk-sans liberation_ttf unscii
     source-code-pro source-sans-pro source-serif-pro roboto roboto-slab roboto-mono
     open-sans fira fira-code font-awesome
   ];
@@ -155,7 +137,6 @@
   programs = {
     dconf.enable = true;
     fish.enable = true;
-    adb.enable = true;
     hyprland = {
       enable = true;
       withUWSM = true;
