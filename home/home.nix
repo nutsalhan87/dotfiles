@@ -91,12 +91,12 @@ in {
       perf
       wl-clipboard
       tldr
-      v2rayn
       dnslookup
       sshfs
       cryptsetup
       android-tools
       jq
+      sing-box
 
       # development
       maven

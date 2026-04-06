@@ -114,11 +114,11 @@ in {
             "SUPER_SHIFT, R, forcerendererreload"
             "SUPER_SHIFT, C, exec, hyprctl reload"
             
-            "SUPER, N, exec, ${nemo}"
-            "SUPER, RETURN, exec, ${kitty}"
-            "SUPER, D, exec, tofi-drun"
+            "SUPER, N, exec, uwsm app -- ${nemo}"
+            "SUPER, RETURN, exec, uwsm app -- ${kitty}"
+            "SUPER, D, exec, uwsm app -- tofi-drun"
             "SUPER, L, exec, loginctl lock-session"
-            "SUPER, bracketright, exec, ${kitty} -e ${python}"
+            "SUPER, bracketright, exec, uwsm app -- ${kitty} -e ${python}"
             
             "SUPER, Left,  hy3:movefocus, l, , nowarp"
             "SUPER, Down,  hy3:movefocus, d, , nowarp"
@@ -150,10 +150,10 @@ in {
             "SUPER_SHIFT, TAB, workspace, e-1"
           ];
           bindr = [
-            "SUPER, grave, exec, ${flameshot} gui -c -p /tmp/screenshot.png"
+            "SUPER, grave, exec, uwsm app -- ${flameshot} gui -c -p /tmp/screenshot.png"
           ];
           bindlr = [
-            ", Print, exec, ${flameshot} full -c -p /tmp/screenshot.png"
+            ", Print, exec, uwsm app -- ${flameshot} full -c -p /tmp/screenshot.png"
           ];
           bindm = [
             "SUPER, mouse:272, movewindow"
