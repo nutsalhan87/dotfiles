@@ -67,6 +67,10 @@
         path = ./templates/dev-shell;
         description = "Template flake with empty devShell";
       };
+      crane = {
+        path = ./templates/crane;
+        description = "Template flake for development in rust";
+      };
     };
   };
 }
