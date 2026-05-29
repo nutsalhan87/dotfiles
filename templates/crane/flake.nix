@@ -1,9 +1,10 @@
 {
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
   inputs.flake-utils.url = "github:numtide/flake-utils";
   inputs.crane.url = "github:ipetkov/crane";
   
   outputs = { self, nixpkgs, flake-utils, crane }: 
-    flake-utils.lib.eachSystem flake-utils.lib.allSystems (system: 
+    flake-utils.lib.eachSystem flake-utils.lib.defaultSystems (system: 
       let
         pkgs = import nixpkgs { inherit system; };
         craneLib = crane.mkLib pkgs;

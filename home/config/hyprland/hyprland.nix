@@ -5,7 +5,7 @@
   opacity = _hyprland.opacity;
   oklch2rgba = _hyprland.oklch2rgba;
   oklch2rgba_hex = _hyprland.oklch2rgba_hex;
-  hy3_palette = _hyprland.hy3_palette;
+  hy3_colors = _hyprland.hy3_colors;
 
   nemo = "${pkgs.nemo}/bin/nemo";
   kitty = "${pkgs.kitty}/bin/kitty";
@@ -26,6 +26,7 @@ in {
         portalPackage = null;
         plugins = with pkgs; [ hyprlandPlugins.hy3 ];
         systemd.enable = false; # т.к. используется uwsm
+        configType = "hyprlang";
         settings = {
           general = {
             layout = "hy3";
@@ -77,23 +78,23 @@ in {
               text_font = "Iosevka";
               text_height = 11;
               text_padding = 5;
-            } // (hy3_palette color_theme.dark);
+              colors = hy3_colors color_theme.dark;
+            };
           };
           windowrule = [
             "match:class kitty, opacity 0.8"
             "match:class code, opacity 0.85"
             "match:class Zulip, opacity 0.85"
             "match:class thunderbird, opacity 0.85"
-            "match:class v2rayN, opacity 0.85"
             "match:class org.telegram.desktop, opacity 0.85"
             "match:class org.telegram.desktop, match:initial_title Просмотр медиа, opacity 1.0"
             "match:class org.telegram.desktop, match:initial_title Просмотр медиа, no_anim on"
+            "match:class org.telegram.desktop, match:initial_title Просмотр медиа, float on, maximize on"
             "match:title flameshot, no_anim on"
           ];
           layerrule = [ 
-            "blur on, match:namespace waybar" 
-            "ignore_alpha 0, match:namespace waybar"
-            "blur on, match:namespace launcher" 
+            "match:namespace waybar, blur on, ignore_alpha 0" 
+            "match:namespace launcher, blur on" 
           ];
           animation = [
             "global, 1, 3, default"
@@ -113,6 +114,7 @@ in {
             "SUPER, C, hy3:changefocus, lower"
             "SUPER_SHIFT, R, forcerendererreload"
             "SUPER_SHIFT, C, exec, hyprctl reload"
+            "SUPER, R, submap, resize"
             
             "SUPER, N, exec, uwsm app -- ${nemo}"
             "SUPER, RETURN, exec, uwsm app -- ${kitty}"
@@ -160,17 +162,22 @@ in {
             "SUPER, mouse:273, resizewindow"
           ];
         };
-        extraConfig = ''
-          bind = SUPER, R, submap, resize
-          submap = resize
-          binde = , right, resizeactive, 10 0
-          binde = , left, resizeactive, -10 0
-          binde = , up, resizeactive, 0 -10
-          binde = , down, resizeactive, 0 10
-          bind = , escape, submap, reset
-          bind = , return, submap, reset
-          submap = reset
-        '';
+        submaps = {
+          resize = {
+            settings = {
+              binde = [
+                ", right, resizeactive, 20 0"
+                ", left, resizeactive, -20 0"
+                ", up, resizeactive, 0 -20"
+                ", down, resizeactive, 0 20"
+              ];
+              bind = [
+                ", escape, submap, reset"
+                ", return, submap, reset"
+              ];
+            };
+          };
+        };
       };
     }
     (lib.mkIf config.my.mic {

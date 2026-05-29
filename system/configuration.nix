@@ -1,7 +1,3 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
 { config, pkgs, ... }:
 
 {
@@ -23,13 +19,15 @@
     nvidia = {
       open = false;
       powerManagement.enable = true;
+      modesetting.enable = true;
+      package = config.boot.kernelPackages.nvidiaPackages.legacy_580; # latest for pascal
     };
     graphics = {
       enable = true;
       enable32Bit = true;
     };
     acpilight.enable = true;
-    bluetooth.enable = true;
+    bluetooth.enable = false;
   };
 
   powerManagement = {
@@ -37,7 +35,6 @@
     cpuFreqGovernor = "schedutil";
   };
 
-  # Use the systemd-boot EFI boot loader.
   boot = {
     loader = {
       systemd-boot.enable = true;
@@ -45,23 +42,15 @@
     };
     tmp.cleanOnBoot = true;
     kernel.sysctl."kernel.sysrq" = 502;
-    kernelPackages = pkgs.linuxPackages_latest;
   };
 
-  networking.hostName = "office"; # Define your hostname.
+  networking.hostName = "office";
   # Pick only one of the below networking options.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
   networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
 
-  # Set your time zone.
   time.timeZone = "Europe/Moscow";
 
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
-  # Select internationalisation properties.
-  # i18n.defaultLocale = "en_US.UTF-8";
   i18n.extraLocaleSettings = {
     LC_TIME = "ru_RU.UTF-8";
   };
@@ -75,7 +64,7 @@
         commands = map (ctl-cmd: { 
           command = "/run/current-system/sw/bin/systemctl ${ctl-cmd} openvpn-office.service";
           options = [ "NOPASSWD" ]; 
-        }) [ "start" "stop" "is-active" ];
+        }) [ "start" "stop" ];
       }
     ];
   }; 
@@ -83,7 +72,7 @@
   services = {
     logind.settings.Login.HandlePowerKey = "suspend";
     upower.enable = true;
-    blueman.enable = true;
+    blueman.enable = config.hardware.bluetooth.enable;
 
     postgresql = {
       enable = true;

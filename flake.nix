@@ -2,8 +2,8 @@
   description = "NixOS configuration";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    stable-nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+    unstable-nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     nix-colorizer.url = "github:nutsalhan87/nix-colorizer";
     
@@ -20,7 +20,7 @@
 
   outputs = { 
     nixpkgs, 
-    stable-nixpkgs, 
+    unstable-nixpkgs, 
     nix-colorizer, 
     nixos-hardware, 
     fenix, 
@@ -52,10 +52,10 @@
         modules = [ 
           ./home/home.nix
         ];
-        extraSpecialArgs = { 
+        extraSpecialArgs = {
           inherit nix-colorizer;
           fenix = fenix.packages.${system};
-          stable-pkgs = import stable-nixpkgs ({
+          unstable-pkgs = import unstable-nixpkgs ({
             inherit system; 
           } // (import ./nixpkgs.nix));
         };

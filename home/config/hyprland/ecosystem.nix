@@ -6,18 +6,7 @@ in {
   config = lib.mkMerge [
     {
       services = {
-        hyprpaper = {
-          enable = true;
-          settings = {
-            wallpaper = [ 
-              {
-                monitor = "";
-                path = wallpaper_path.dark;
-              }
-            ];
-            splash = false;
-          };
-        };
+        awww.enable = true;
         hypridle = {
           enable = true;
           settings = {
@@ -58,6 +47,15 @@ in {
                 font_size = 92;
                 font_family = "Oranienbaum";
                 position = "0, 15%";
+              }
+              {
+                monitor = "";
+                text = "cmd[update:17] echo \"<span>$(hyprctl devices -j | jq -r '.keyboards[] | select(.main == true) | .active_keymap')</span>\"";
+                font_size = 24;
+                font_family = "Oranienbaum";
+                position = "-2.5%, 2.5%";
+                halign = "right";
+                valign = "bottom";
               }
             ];
             input-field = [

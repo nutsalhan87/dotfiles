@@ -1,8 +1,6 @@
 { pkgs, lib, config, ... }:
 
 {
-  options.my.v2rayNAutoStart = lib.mkEnableOption "v2rayN auto start";
-
   config = {
     home.preferXdgDirectories = true;
     xdg = {
@@ -10,9 +8,6 @@
       autostart = {
         enable = true;
         readOnly = true;
-        entries = lib.mkIf config.my.v2rayNAutoStart [
-          "${pkgs.v2rayn}/share/applications/v2rayn.desktop"
-        ];
       };
       desktopEntries = {
         poweroff = {
@@ -43,13 +38,17 @@
           target = "fonts/Oranienbaum-Regular.ttf";
           source = ../assets/Oranienbaum-Regular.ttf;
         };
+        pnpm_home = {
+          target = "pnpm/.keep";
+          text = "";
+        };
       };
       portal = {
         enable = lib.mkForce true;
         xdgOpenUsePortal = true;
         extraPortals = with pkgs; [
-          xdg-desktop-portal-gtk
           xdg-desktop-portal-hyprland
+          xdg-desktop-portal-gtk
           darkman
         ];
       };

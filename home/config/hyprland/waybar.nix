@@ -188,9 +188,9 @@ in {
             inactive-icon = "";
           in {
             interval = 1;
-            exec = "sh -c 'if sudo systemctl is-active openvpn-office.service 1>/dev/null; then echo  ${active-icon}; else echo  ${inactive-icon}; fi'";
+            exec = "sh -c 'if systemctl is-active openvpn-office.service 1>/dev/null; then echo  ${active-icon}; else echo  ${inactive-icon}; fi'";
             tooltip = false;
-            on-click = "sh -c 'if sudo systemctl is-active openvpn-office.service; then sudo systemctl stop openvpn-office.service; else sudo systemctl start openvpn-office.service; fi'";
+            on-click = "sh -c 'if systemctl is-active openvpn-office.service; then sudo systemctl stop openvpn-office.service; else sudo systemctl start openvpn-office.service; fi'";
           };
         };
         style = waybar-style.dark;
