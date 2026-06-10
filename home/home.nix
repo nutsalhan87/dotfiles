@@ -81,7 +81,7 @@ in {
       pavucontrol
       qpwgraph
       qbittorrent
-      xev # чтобы узнать название клавиши
+      wev # чтобы узнать название клавиши
       pulseaudio
       htop
       ncdu
@@ -96,8 +96,7 @@ in {
       amdgpu_top
       wl-clipboard
       tldr
-      v2rayn
-      sing-box
+      xray
 
       # development
       maven
@@ -156,6 +155,7 @@ in {
           TERM = "xterm-256color";
         };
       };
+      includes = [ "config.d/*" ];
     };
     kitty = {
       enable = true;
@@ -171,6 +171,7 @@ in {
         number = true;
       };
     };
+    man.generateCaches = false;
   };
 
   services = {
@@ -190,6 +191,24 @@ in {
     };
     blueman-applet.enable = true;
     network-manager-applet.enable = true;
+  };
+
+  systemd.user.services = {
+    xray = {
+      Install = {
+        WantedBy = [ "graphical-session.target" ];
+      };
+      Unit = {
+        Description = "A unified platform for anti-censorship";
+      };
+      Service = {
+        ExecStart = "${pkgs.xray}/bin/xray run";
+        Environment = [
+          "XRAY_LOCATION_ASSET=%D/xray"
+          "XRAY_LOCATION_CONFIG=%E/xray"
+        ];
+      };
+    };
   };
 
   gtk = let 

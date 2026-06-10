@@ -51,20 +51,25 @@
     kernelPackages = pkgs.linuxPackages_latest;
   };
 
-  networking.hostName = "lenovo"; # Define your hostname.
-  # Pick only one of the below networking options.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
+  networking = {
+    hostName = "lenovo";
+    networkmanager = {
+      enable = true;
+      wifi.backend = "iwd";
+    };
+    wireless = {
+      enable = false;
+      iwd.enable = true;
+    };
+    firewall = {
+      allowedUDPPorts = [ 53 67 1900 ];
+      allowedTCPPorts = [ 53 ];
+    };
+    nftables.enable = true;
+  };
 
-  # Set your time zone.
   time.timeZone = "Europe/Moscow";
 
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
-  # Select internationalisation properties.
-  # i18n.defaultLocale = "en_US.UTF-8";
   i18n.extraLocaleSettings = {
     LC_TIME = "ru_RU.UTF-8";
   };
@@ -78,14 +83,7 @@
     logind.settings.Login.HandlePowerKey = "suspend";
     upower.enable = true;
     blueman.enable = true;
-
-    postgresql = {
-      enable = true;
-      authentication = pkgs.lib.mkForce ''
-        local   all             all                                     trust
-        host    all             all             127.0.0.1/32            trust
-      '';
-    };
+    gvfs.enable = true;
 
     displayManager.sddm = {
       enable = true;
@@ -164,8 +162,6 @@
   # services.openssh.enable = true;
 
   # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
 
