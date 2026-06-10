@@ -45,19 +45,19 @@
   gaps = 5;
   opacity = 0.75;
 
-  hy3_palette = theme: let
-    palette = class: color: text: {
-      "col.${class}" = oklch2rgba (color // { a = opacity; });
-      "col.${class}.border" = oklch2rgba (theme.bg // { a = opacity; });
-      "col.${class}.text" = oklch2rgba text;
+  hy3_colors = theme: let
+    colors = class: color: text: {
+      "${class}" = oklch2rgba (color // { a = opacity; });
+      "${class}_border" = oklch2rgba (theme.bg // { a = opacity; });
+      "${class}_text" = oklch2rgba text;
     };
   in with theme;
     builtins.foldl' (a: b: a // b) { } [
-      (palette "active" primary text.active) 
-      (palette "focused" (nix-colorizer.oklch.darken primary 0.2) text.active) 
-      (palette "inactive" bg text.inactive) 
-      (palette "urgent" alert text.active) 
-      (palette "locked" (nix-colorizer.hex.to.oklch "#746801") text.active) 
+      (colors "active" primary text.active) 
+      (colors "focused" (nix-colorizer.oklch.darken primary 0.2) text.active) 
+      (colors "inactive" bg text.inactive) 
+      (colors "urgent" alert text.active) 
+      (colors "locked" (nix-colorizer.hex.to.oklch "#746801") text.active) 
     ];
 
   wallpaper_path = {
@@ -91,7 +91,7 @@ in {
       color_theme = lib.mkAnything color_theme;
       opacity = lib.mkAnything opacity;
       gaps = lib.mkAnything gaps;
-      hy3_palette = lib.mkAnything hy3_palette;
+      hy3_colors = lib.mkAnything hy3_colors;
       oklch2rgba = lib.mkAnything oklch2rgba;
       oklch2rgba_hex = lib.mkAnything oklch2rgba_hex;
       wallpaper_path = lib.mkAnything wallpaper_path;

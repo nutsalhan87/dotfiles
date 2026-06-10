@@ -1,7 +1,3 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
 { config, pkgs, ... }:
 
 {
@@ -40,7 +36,6 @@
     cpuFreqGovernor = "schedutil";
   };
 
-  # Use the systemd-boot EFI boot loader.
   boot = {
     loader = {
       systemd-boot.enable = true;
@@ -48,7 +43,6 @@
     };
     tmp.cleanOnBoot = true;
     kernel.sysctl."kernel.sysrq" = 502;
-    kernelPackages = pkgs.linuxPackages_latest;
   };
 
   networking = {
@@ -82,7 +76,7 @@
   services = {
     logind.settings.Login.HandlePowerKey = "suspend";
     upower.enable = true;
-    blueman.enable = true;
+    blueman.enable = config.hardware.bluetooth.enable;
     gvfs.enable = true;
 
     displayManager.sddm = {

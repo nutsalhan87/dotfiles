@@ -8,7 +8,6 @@
           inherit default;
         };
       });
-      flameshot = prev.flameshot.override { enableWlrSupport = true; };
     })
   ];
 }

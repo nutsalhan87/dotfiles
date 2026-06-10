@@ -8,7 +8,6 @@
       autostart = {
         enable = true;
         readOnly = true;
-        entries = [ ];
       };
       desktopEntries = {
         poweroff = {
@@ -35,13 +34,17 @@
           target = "fonts/Oranienbaum-Regular.ttf";
           source = ../assets/Oranienbaum-Regular.ttf;
         };
+        pnpm_home = {
+          target = "pnpm/.keep";
+          text = "";
+        };
       };
       portal = {
         enable = lib.mkForce true;
         xdgOpenUsePortal = true;
         extraPortals = with pkgs; [
-          xdg-desktop-portal-gtk
           xdg-desktop-portal-hyprland
+          xdg-desktop-portal-gtk
           darkman
         ];
       };

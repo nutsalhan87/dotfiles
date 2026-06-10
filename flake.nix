@@ -2,8 +2,8 @@
   description = "NixOS configuration";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    stable-nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+    unstable-nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     nix-colorizer.url = "github:nutsalhan87/nix-colorizer";
     
@@ -13,14 +13,14 @@
     };
 
     home-manager = {
-      url = "github:nix-community/home-manager";
+      url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
   outputs = { 
     nixpkgs, 
-    stable-nixpkgs, 
+    unstable-nixpkgs, 
     nix-colorizer, 
     nixos-hardware, 
     fenix, 
@@ -48,10 +48,10 @@
         modules = [ 
           ./home/home.nix
         ];
-        extraSpecialArgs = { 
+        extraSpecialArgs = {
           inherit nix-colorizer;
           fenix = fenix.packages.${system};
-          stable-pkgs = import stable-nixpkgs ({
+          unstable-pkgs = import unstable-nixpkgs ({
             inherit system; 
           } // (import ./nixpkgs.nix));
         };
@@ -62,6 +62,10 @@
       devShell = {
         path = ./templates/dev-shell;
         description = "Template flake with empty devShell";
+      };
+      crane = {
+        path = ./templates/crane;
+        description = "Template flake for development in rust";
       };
     };
   };
