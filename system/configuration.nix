@@ -74,14 +74,6 @@
     upower.enable = true;
     blueman.enable = config.hardware.bluetooth.enable;
 
-    postgresql = {
-      enable = true;
-      authentication = pkgs.lib.mkForce ''
-        local   all             all                                     trust
-        host    all             all             127.0.0.1/32            trust
-      '';
-    };
-
     displayManager.sddm = {
       enable = true;
       wayland.enable = true;
@@ -101,6 +93,7 @@
       pulse.enable = true;
     };
     pulseaudio.enable = false;
+    speechd.enable = false;
 
     openvpn.servers.office = {
       config = '' config /root/.config/openvpn/office.ovpn '';
