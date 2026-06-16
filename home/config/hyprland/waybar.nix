@@ -5,6 +5,7 @@
   oklch2rgba = _hyprland.oklch2rgba;
   wpctl = _hyprland.wpctl;
   opacity = _hyprland.opacity;
+  brightnessctl = _hyprland.brightnessctl;
 
   waybar-style = let
     dark-colors = with color_theme.dark; {
@@ -116,6 +117,7 @@ in {
             "pulseaudio#out"
             "memory"
             "cpu"
+            "temperature"
             "clock"
             "hyprland/language"
             "tray"
@@ -144,10 +146,16 @@ in {
             locale = "ru_RU.UTF-8";
             tooltip = false;
           };
+          "temperature" = {
+            hwmon-path = config.my.cpu.hwmon-path;
+            format = " {temperatureC}°";
+            tooltip = false;
+            critical-threshold = 90;
+          };
           "cpu" = {
             interval = 1;
             format = let 
-              cores = 16;
+              cores = config.my.cpu.cores;
               cores_idx = lib.lists.range 1 (cores - 1);
               icons = builtins.foldl' (a: b: a + "{icon${toString b}}") "{icon0}" cores_idx;
             in
@@ -216,6 +224,29 @@ in {
           on-click = "${wpctl} set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
           on-scroll-up = "";
           on-scroll-down = "";
+          tooltip = false;
+        };
+      };
+    })
+    (lib.mkIf config.my.battery {
+      programs.waybar.settings.mainBar = {
+        modules-right = lib.mkBefore [ "battery" ];
+        "battery" = {
+          interval = 10;
+          format = "{icon} {capacity}%";
+          format-icons = [ "" "" "" "" "" ];
+          tooltip = false;
+        };
+      };
+    })
+    (lib.mkIf config.my.screen_brightness {
+      programs.waybar.settings.mainBar = {
+        modules-right = lib.mkBefore [ "backlight" ];
+        "backlight" = {
+          format = "{icon} {percent}%";
+          format-icons = [ "" "" ];
+          on-scroll-up = "${brightnessctl} set +5%";
+          on-scroll-down = "${brightnessctl} set 5%-";
           tooltip = false;
         };
       };

@@ -65,6 +65,9 @@
     light = "~/.wallpaper-light.jpg"; 
   };
 
+  idle_lock_timeout = 300;
+  keyboard_led_device = "platform::kbd_backlight";
+
 in {
   imports = [
     ./hyprland.nix
@@ -76,11 +79,22 @@ in {
 
   options.my = {
     dpms = lib.mkEnableOption "DPMS";
+    keyboard_led = lib.mkEnableOption "Is possible to change keyboard led"; 
+    screen_brightness = lib.mkEnableOption "Is possible to change screen brightness"; 
     mic = lib.mkEnableOption "mic";
     card-path = lib.mkOption {
       type = lib.types.pathWith { inStore = false; absolute = true; };
     };
     is-nvidia = lib.mkEnableOption "Hyprland Nvidia support";
+    battery = lib.mkEnableOption "Battery presence";
+    cpu = {
+      cores = lib.mkOption {
+        type = lib.types.ints.positive;
+      };
+      hwmon-path = lib.mkOption {
+        type = lib.types.pathWith { inStore = false; absolute = true; };
+      };
+    };
     _hyprland = {
       color_theme = lib.mkAnything color_theme;
       opacity = lib.mkAnything opacity;
@@ -89,6 +103,8 @@ in {
       oklch2rgba = lib.mkAnything oklch2rgba;
       oklch2rgba_hex = lib.mkAnything oklch2rgba_hex;
       wallpaper_path = lib.mkAnything wallpaper_path;
+      idle_lock_timeout = lib.mkAnything idle_lock_timeout;
+      keyboard_led_device = lib.mkAnything keyboard_led_device;
     };
   };
 

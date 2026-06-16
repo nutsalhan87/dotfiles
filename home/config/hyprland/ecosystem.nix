@@ -1,6 +1,9 @@
 { pkgs, lib, config, nix-colorizer, ... }: let
   _hyprland = config.my._hyprland;
   wallpaper_path = _hyprland.wallpaper_path;
+  idle_lock_timeout = _hyprland.idle_lock_timeout;
+  keyboard_led_device = _hyprland.keyboard_led_device;
+  brightnessctl = _hyprland.brightnessctl;
 
 in {
   config = lib.mkMerge [
@@ -17,7 +20,7 @@ in {
             };
             listener = [
               {
-                timeout = 600;
+                timeout = idle_lock_timeout;
                 on-timeout = "loginctl lock-session";
               }
             ];
@@ -71,9 +74,27 @@ in {
     (lib.mkIf config.my.dpms {
       services.hypridle.settings.listener = [
         {
-          timeout = 630;
+          timeout = idle_lock_timeout * 1.1;
           on-timeout = "hyprctl dispatch dpms off";
           on-resume = "hyprctl dispatch dpms on";
+        }
+      ];
+    })
+    (lib.mkIf config.my.keyboard_led {
+      services.hypridle.settings.listener = [
+        {
+          timeout = idle_lock_timeout / 2.0;
+          on-timeout = "${brightnessctl} -sd ${keyboard_led_device} set 0";
+          on-resume = "${brightnessctl} -rd ${keyboard_led_device}";
+        }
+      ];
+    })
+    (lib.mkIf config.my.screen_brightness {
+      services.hypridle.settings.listener = [
+        {
+          timeout = idle_lock_timeout / 2.0;
+          on-timeout = "${brightnessctl} -s set 10%";
+          on-resume = "${brightnessctl} -r";
         }
       ];
     })

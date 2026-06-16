@@ -12,10 +12,12 @@
   python = "${pkgs.python3}/bin/python";
   flameshot = "${pkgs.flameshot}/bin/flameshot";
   wpctl = "${pkgs.wireplumber}/bin/wpctl";
+  brightnessctl = "${pkgs.brightnessctl}/bin/brightnessctl";
 
 in {
   options.my = {
     _hyprland.wpctl = lib.mkAnything wpctl;
+    _hyprland.brightnessctl = lib.mkAnything brightnessctl;
   };
 
   config = lib.mkMerge [
@@ -180,6 +182,12 @@ in {
         };
       };
     }
+    (lib.mkIf config.my.screen_brightness {
+      wayland.windowManager.hyprland.settings.bind = [
+        ", XF86MonBrightnessDown, exec, ${brightnessctl} set 5%-"
+        ", XF86MonBrightnessUp, exec, ${brightnessctl} set +5%"
+      ];
+    })
     (lib.mkIf config.my.mic {
       wayland.windowManager.hyprland.settings.bind = [
         ", XF86AudioMute, exec, ${wpctl} set-mute @DEFAULT_AUDIO_SINK@ toggle"

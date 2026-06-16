@@ -82,6 +82,7 @@ in {
         # utilities
         pavucontrol
         qpwgraph
+        wev # чтобы узнать название клавиши
         pulseaudio
         htop
         ncdu
@@ -98,23 +99,19 @@ in {
         cryptsetup
         android-tools
         jq
-        wev
 
         # development
         maven
         postgresql postgresql.pg_config libpq
         git
         (python3.withPackages (p: with p; [
-          numpy
-          pandas
-          scipy
-          matplotlib
+          numpy pandas scipy matplotlib
           ipykernel ipympl
-          requests
-          psycopg
+          requests psycopg
+          black
         ]))
         gcc gdb gnumake
-        umlet plantuml
+        umlet
         rust-toolchain
         nodejs pnpm
         php
@@ -192,6 +189,7 @@ in {
         enable = true;
         profiles = {};
       };
+      man.generateCaches = false;
     };
 
     services = {
@@ -245,9 +243,16 @@ in {
 
     my = {
       dpms = false;
+      keyboard_led = false;
+      screen_brightness = false;
       mic = false;
       card-path = "/dev/dri/by-path/pci-0000:2b:00.0-card";
       is-nvidia = true;
+      battery = false;
+      cpu = {
+        cores = 16;
+        hwmon-path = "/sys/class/hwmon/hwmon1/temp1_input";
+      };
     };
   };
 }
