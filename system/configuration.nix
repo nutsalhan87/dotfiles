@@ -57,14 +57,8 @@
 
   networking = {
     hostName = "lenovo";
-    networkmanager = {
-      enable = true;
-      wifi.backend = "iwd";
-    };
-    wireless = {
-      enable = false;
-      iwd.enable = true;
-    };
+    networkmanager.enable = true;
+    wireless.enable = true;
     firewall = {
       allowedUDPPorts = [ 53 67 1900 ];
       allowedTCPPorts = [ 53 ];

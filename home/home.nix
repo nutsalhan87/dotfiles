@@ -43,7 +43,6 @@ in {
         MOZ_USE_XINPUT2 = "1";
         EDITOR = "vim";
         TERMINAL = "kitty";
-        JAVA_TOOL_OPTIONS = "-Dawt.useSystemAAFontSettings=lcd";
         PNPM_HOME = "${config.xdg.dataHome}/pnpm";
       };
 
@@ -102,7 +101,7 @@ in {
         jq
 
         # development
-        maven
+        maven gradle
         postgresql postgresql.pg_config libpq
         git
         (python3.withPackages (p: with p; [
@@ -202,6 +201,10 @@ in {
       };
       blueman-applet.enable = true;
       network-manager-applet.enable = true;
+      udiskie = {
+        enable = true;
+        automount = false;
+      };
     };
 
     systemd.user.services = {
