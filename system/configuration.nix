@@ -7,7 +7,17 @@
     extraOptions = ''
       experimental-features = nix-command flakes
     '';
-    settings.auto-optimise-store = true;
+    settings = {
+      auto-optimise-store = true;
+      substituters = [
+        "https://nix-community.cachix.org"
+        "https://cache.nixos.org/"
+      ];
+      trusted-public-keys = [
+        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      ];
+      trusted-users = [ "nutsalhan87" ];
+    };
   };
 
   imports =
@@ -98,6 +108,7 @@
       pulse.enable = true;
     };
     pulseaudio.enable = false;
+    speechd.enable = false;
   };
 
   environment = {
@@ -148,7 +159,10 @@
       enable = true;
       setSocketVariable = true;
     };
-    libvirtd.enable = true;
+    libvirtd = {
+      enable = true;
+      qemu.vhostUserPackages = with pkgs; [ virtiofsd ];
+    };
     spiceUSBRedirection.enable = true;
   };
 

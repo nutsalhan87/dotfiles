@@ -11,6 +11,8 @@
   kitty = "${pkgs.kitty}/bin/kitty";
   python = "${pkgs.python3}/bin/python";
   flameshot = "${pkgs.flameshot}/bin/flameshot";
+  tesseract = "${pkgs.tesseract}/bin/tesseract";
+  wl-copy = "${pkgs.wl-clipboard}/bin/wl-copy";
   wpctl = "${pkgs.wireplumber}/bin/wpctl";
   brightnessctl = "${pkgs.brightnessctl}/bin/brightnessctl";
 
@@ -161,6 +163,7 @@ in {
           ];
           bindr = [
             "SUPER, grave, exec, uwsm app -- ${flameshot} gui -c -p /tmp/screenshot.png"
+            "SUPER_SHIFT, grave, exec, uwsm app -- ${flameshot} gui --raw | ${tesseract} stdin stdout -l eng+rus | ${wl-copy}"
           ];
           bindlr = [
             ", Print, exec, uwsm app -- ${flameshot} full -c -p /tmp/screenshot.png"

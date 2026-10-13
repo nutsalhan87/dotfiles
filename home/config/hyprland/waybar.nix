@@ -147,7 +147,7 @@ in {
             tooltip = false;
           };
           "temperature" = {
-            hwmon-path = "/sys/class/hwmon/hwmon2/temp1_input";
+            hwmon-path = config.my.cpu.hwmon-path;
             format = " {temperatureC}°";
             tooltip = false;
             critical-threshold = 90;
@@ -155,7 +155,7 @@ in {
           "cpu" = {
             interval = 1;
             format = let 
-              cores = 12;
+              cores = config.my.cpu.cores;
               cores_idx = lib.lists.range 1 (cores - 1);
               icons = builtins.foldl' (a: b: a + "{icon${toString b}}") "{icon0}" cores_idx;
             in

@@ -87,6 +87,14 @@ in {
     };
     is-nvidia = lib.mkEnableOption "Hyprland Nvidia support";
     battery = lib.mkEnableOption "Battery presence";
+    cpu = {
+      cores = lib.mkOption {
+        type = lib.types.ints.positive;
+      };
+      hwmon-path = lib.mkOption {
+        type = lib.types.pathWith { inStore = false; absolute = true; };
+      };
+    };
     _hyprland = {
       color_theme = lib.mkAnything color_theme;
       opacity = lib.mkAnything opacity;

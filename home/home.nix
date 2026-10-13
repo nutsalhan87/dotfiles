@@ -56,7 +56,7 @@ in {
         inkscape
 
         # gaming
-        wineWow64Packages.waylandFull
+        winePackages.waylandFull
         winetricks
         gzdoom
         steam-run
@@ -121,6 +121,7 @@ in {
       ] ++ (with unstable-pkgs; [
         xray
         opencode
+        claude-code
       ]);
 
       pointerCursor = {
@@ -259,6 +260,10 @@ in {
       card-path = "/dev/dri/by-path/pci-0000:05:00.0-card";
       is-nvidia = false;
       battery = true;
+      cpu = {
+        cores = 12;
+        hwmon-path = "/sys/class/hwmon/hwmon2/temp1_input";
+      };
     };
   };
 }
