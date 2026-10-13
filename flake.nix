@@ -12,6 +12,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    winapps = {
+      url = "github:winapps-org/winapps";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     home-manager = {
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -24,6 +29,7 @@
     nix-colorizer, 
     nixos-hardware, 
     fenix, 
+    winapps,
     home-manager, 
     ... 
   }@inputs: let 
@@ -55,6 +61,7 @@
         extraSpecialArgs = {
           inherit nix-colorizer;
           fenix = fenix.packages.${system};
+          winapps = winapps.packages.${system};
           unstable-pkgs = import unstable-nixpkgs ({
             inherit system; 
           } // (import ./nixpkgs.nix));

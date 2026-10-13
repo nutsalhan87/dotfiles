@@ -7,7 +7,19 @@
     extraOptions = ''
       experimental-features = nix-command flakes
     '';
-    settings.auto-optimise-store = true;
+    settings = {
+      auto-optimise-store = true;
+      substituters = [
+        "https://nix-community.cachix.org"
+        "https://cache.nixos.org/"
+        "https://winapps.cachix.org/"
+      ];
+      trusted-public-keys = [
+        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+        "winapps.cachix.org-1:HI82jWrXZsQRar/PChgIx1unmuEsiQMQq+zt05CD36g="
+      ];
+      trusted-users = [ "nutsalhan87" ];
+    };
   };
 
   imports =
@@ -38,10 +50,12 @@
   boot = {
     loader = {
       systemd-boot.enable = true;
+      systemd-boot.memtest86.enable = true;
       efi.canTouchEfiVariables = true;
     };
     tmp.cleanOnBoot = true;
     kernel.sysctl."kernel.sysrq" = 502;
+    supportedFilesystems = [ "nfs" ];
   };
 
   networking.hostName = "office";
@@ -49,6 +63,7 @@
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
   networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
 
+  networking.timeServers = map (n: "${toString n}.ru.pool.ntp.org") [ 0 1 2 3 ];
   time.timeZone = "Europe/Moscow";
 
   i18n.extraLocaleSettings = {
@@ -124,7 +139,7 @@
   users = {
     users.nutsalhan87 = {
       isNormalUser = true;
-      extraGroups = [ "wheel" "video" "adbusers" "libvirtd" "audio" ];
+      extraGroups = [ "wheel" "video" "adbusers" "libvirtd" "kvm" "audio" ];
       shell = pkgs.fish;
     };
     groups.libvirtd = {};
@@ -149,7 +164,10 @@
       enable = true;
       setSocketVariable = true;
     };
-    libvirtd.enable = true;
+    libvirtd = {
+      enable = true;
+      qemu.vhostUserPackages = with pkgs; [ virtiofsd ];
+    };
     spiceUSBRedirection.enable = true;
   };
 

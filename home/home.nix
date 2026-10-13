@@ -1,4 +1,4 @@
-{ config, pkgs, lib, unstable-pkgs, nix-colorizer, fenix, ... }: let
+{ config, pkgs, lib, unstable-pkgs, nix-colorizer, fenix, winapps, ... }: let
   
   rust-toolchain = with fenix; combine (with complete; [
     rustc
@@ -56,7 +56,7 @@ in {
         inkscape
 
         # gaming
-        wineWow64Packages.waylandFull
+        winePackages.waylandFull
         winetricks
         gzdoom
         steam-run
@@ -78,6 +78,8 @@ in {
         # documents
         libreoffice
         djview
+        winapps.winapps
+        winapps.winapps-launcher
 
         # utilities
         pavucontrol
@@ -125,6 +127,7 @@ in {
       ] ++ (with unstable-pkgs; [
         xray
         opencode
+        claude-code
       ]);
 
       pointerCursor = {
